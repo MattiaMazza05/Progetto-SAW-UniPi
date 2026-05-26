@@ -6,17 +6,34 @@ import Workouts from "./pages/Workouts";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import { useAuth } from "../src/context/AuthContext";
+import { logoutUser } from "./firebase/auth";
+
+function NavigationBar() {
+  const { currentUser } = useAuth();
+  if (!currentUser) return null;
+  return (
+    <nav className="p-4 flex gap-4 border-b">
+      <Link to="/dashboard">Dashboard</Link>
+      <Link to="/measurements">Measurements</Link>
+      <Link to="/checklist">Checklist</Link>
+      <Link to="/workouts">Workouts</Link>
+      <button
+        onClick={() => {
+          logoutUser();
+        }}
+        className="text-red-500"
+      >
+        Logout
+      </button>
+    </nav>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
-      <nav className="p-4 flex gap-4 border-b">
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/measurements">Measurements</Link>
-        <Link to="/checklist">Checklist</Link>
-        <Link to="/workouts">Workouts</Link>
-        <Link to="/login">Login</Link>
-      </nav>
-
+      <NavigationBar />
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
