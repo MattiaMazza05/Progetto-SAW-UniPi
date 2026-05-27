@@ -27,7 +27,7 @@ export default function MesaurementsForm() {
 
       if (docSnap.exists()) {
         const userData = docSnap.data();
-        //converto in hinc sennò formula da valore diverso
+        //converto in inch sennò formula da valore diverso
         const hInch = userData.height / 2.54;
         const wInch = waist / 2.54;
         const nInch = neck / 2.54;
