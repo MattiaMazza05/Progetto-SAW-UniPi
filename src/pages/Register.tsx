@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "../firebase/auth";
 import { Button, Card, Label, TextInput, Select } from "flowbite-react";
-import { doc, setDoc, Timestamp } from "firebase/firestore";
+import { doc, setDoc  } from "firebase/firestore";
 import {db} from "../firebase/config"
 
 export default function Register() {
