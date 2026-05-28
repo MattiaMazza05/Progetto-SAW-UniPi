@@ -3,17 +3,10 @@ import {
   TableBody,
   TableCell,
   TableHead,
-  TableHeadCell,
+  TableHeader,
   TableRow,
-  Button,
-} from "flowbite-react";
-import {
-  onSnapshot,
-  collection,
-  query,
-  orderBy,
-  QuerySnapshot,
-} from "firebase/firestore";
+} from "@/components/ui/table";
+import { onSnapshot, collection, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useAuth } from "../context/AuthContext";
 import { useEffect, useState } from "react";
@@ -57,47 +50,33 @@ export function MesaurementsTable() {
     return () => unsub();
   }, [currentUser]);
   return (
-    <div className="overflow-x-auto">
-      <div className="flex flex-wrap gap-2"></div>
-      <Table striped>
-        <TableHead>
-          <TableHeadCell>Data</TableHeadCell>
-          <TableHeadCell>Peso</TableHeadCell>
-          <TableHeadCell>Collo (cm)</TableHeadCell>
-          <TableHeadCell>Vita (cm)</TableHeadCell>
-          <TableHeadCell>Fianchi (cm)</TableHeadCell>
-          <TableHeadCell>BF %</TableHeadCell>
-          <TableHeadCell>Massa Grassa (kg)</TableHeadCell>
-          <TableHeadCell>Massa Magra (kg)</TableHeadCell>
-        </TableHead>
-        <TableBody className="divide-y">
-          {dataHistory.length == 0 ? (
-            <TableRow>
-              <TableCell colSpan={8} className="text-center">
-                Nessuna misurazione trovata.
-              </TableCell>
-            </TableRow>
-          ) : (
-            dataHistory.map((entry) => (
-              <TableRow
-                key={entry.id}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <TableCell className="font-medium text-gray-900 dark:text-white">
-                  {entry.dateInput}
-                </TableCell>
-                <TableCell>{entry.weight}</TableCell>
-                <TableCell>{entry.neck}</TableCell>
-                <TableCell>{entry.waist}</TableCell>
-                <TableCell>{entry.hips}</TableCell>
-                <TableCell>{entry.bfP?.toFixed(1)}%</TableCell>
-                <TableCell>{entry.fatMass?.toFixed(1)}</TableCell>
-                <TableCell>{entry.leanMass?.toFixed(1)}</TableCell>
-              </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
-    </div>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-25">Data</TableHead>
+          <TableHead>Peso</TableHead>
+          <TableHead>Collo (cm)</TableHead>
+          <TableHead>Vita (cm)</TableHead>
+          <TableHead>Fianchi (cm)</TableHead>
+          <TableHead>BF %</TableHead>
+          <TableHead>Massa Grassa (kg)</TableHead>
+          <TableHead>Massa Magra (kg)</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {dataHistory.map((entry) => (
+          <TableRow key={entry.id}>
+            <TableCell className="font-medium">{entry.dateInput}</TableCell>
+            <TableCell>{entry.weight}</TableCell>
+            <TableCell>{entry.neck}</TableCell>
+            <TableCell>{entry.waist}</TableCell>
+            <TableCell>{entry.hips}</TableCell>
+            <TableCell>{entry.bfP?.toFixed(1)}%</TableCell>
+            <TableCell>{entry.fatMass?.toFixed(1)}</TableCell>
+            <TableCell>{entry.leanMass?.toFixed(1)}</TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

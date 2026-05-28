@@ -11,7 +11,7 @@ export default function Measurements() {
         Benvenuto nella tua sezione measurements.
       </p>
       <MesaurementsForm />
-      <MesaurementsTable/>
+      <MesaurementsTable />
 
       {/* In futuro potrai facilmente aggiungere la tabella dello storico o il grafico qui sotto */}
       {/* <WeightChart /> */}
