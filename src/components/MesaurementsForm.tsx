@@ -1,4 +1,13 @@
-import { Button, Label, TextInput } from "flowbite-react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
 import { doc, getDoc, addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "../firebase/config";
@@ -15,7 +24,7 @@ export default function MesaurementsForm() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [fatMass, setFatMass] = useState(0);
   const [leanMass, setLeanMass] = useState(0);
-
+  
   async function BodyFatCalculator(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!currentUser) return;
@@ -57,7 +66,6 @@ export default function MesaurementsForm() {
       setIsCalculating(false);
     }
   }
-
   async function saveMesaurements(
     bfValue: number,
     fmValue: number,
@@ -81,103 +89,82 @@ export default function MesaurementsForm() {
     );
   }
   return (
-    <div className="p-4 ">
-      <h2>Inserisci i tuoi dati:</h2>
-      <form
-        className="flex max-w-md flex-col gap-4"
-        onSubmit={BodyFatCalculator}
-      >
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="date">Data</Label>
+    <Card className="w-full max-w-sm">
+      <CardHeader>
+        <CardTitle>Inserisci i tuoi dati</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={BodyFatCalculator} id="measurement-form">
+          <div className="flex flex-col gap-6">
+            <div className="grid gap-2" >
+              <Label htmlFor="date">Data</Label>
+              <Input
+                id="date"
+                type="date"
+                onChange={(event) => setDate(event.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="weight">Peso</Label>
+              </div>
+              <Input
+                id="weight"
+                type="number"
+                step="0.1"
+                placeholder="espresso in kg"
+                onChange={(event) => setWeight(Number(event.target.value))}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="NeckC">Circonferenza collo</Label>
+              </div>
+              <Input
+                id="NeckC"
+                type="number"
+                step="0.1"
+                placeholder="espresso in cm"
+                onChange={(event) => setNeck(Number(event.target.value))}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="WaistC">Circonferenza vita</Label>
+              </div>
+              <Input
+                id="WaistC"
+                type="number"
+                step="0.1"
+                placeholder="espresso in cm"
+                onChange={(event) => setWaist(Number(event.target.value))}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="HipsC">Circonferenza fianchi</Label>
+              </div>
+              <Input
+                id="HipsC"
+                type="number"
+                step="0.1"
+                placeholder="espresso in cm"
+                onChange={(event) => setHips(Number(event.target.value))}
+                required
+              />
+            </div>
           </div>
-          <TextInput
-            id="date"
-            type="date"
-            onChange={(event) => setDate(event.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="weight">Peso</Label>
-          </div>
-          <TextInput
-            id="weight"
-            type="number"
-            step="0.1"
-            placeholder="espresso in kg"
-            onChange={(event) => setWeight(Number(event.target.value))}
-            required
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="NeckC">Circonferenza collo</Label>
-          </div>
-          <TextInput
-            id="NeckC"
-            type="number"
-            step="0.1"
-            placeholder="espresso in cm"
-            onChange={(event) => setNeck(Number(event.target.value))}
-            required
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="WasteC">Circonferenza vita</Label>
-          </div>
-          <TextInput
-            id="WaistC"
-            type="number"
-            step="0.1"
-            placeholder="espresso in cm"
-            onChange={(event) => setWaist(Number(event.target.value))}
-            required
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="HipC">Circonferenza fianchi</Label>
-          </div>
-          <TextInput
-            id="HipsC"
-            type="number"
-            step="0.1"
-            placeholder="espresso in cm"
-            onChange={(event) => setHips(Number(event.target.value))}
-            required
-          />
-        </div>
-        <Button type="submit" disabled={isCalculating}>
-          {isCalculating ? "Caricamento database..." : "Calcola e Inserisci"}
+        </form>
+      </CardContent>
+      <CardFooter className="flex-col gap-2">
+        <Button form="measurement-form" type="submit" disabled={isCalculating} className="w-full">
+          {isCalculating ? "Caricamento" : "Calcola e inserisci"}
         </Button>
-      </form>
-      {resultBF !== null && (
-        <div className="mt-8 p-4 bg-green-50 border border-green-200 rounded-lg max-w-md">
-          <ul className="text-gray-800">
-            <li>
-              <strong>Data misurazione:</strong> {date}
-            </li>
-            <li>
-              <strong>Peso:</strong>
-              {weight}
-            </li>
-            <li>
-              <strong>Body Fat Stimata:</strong> {resultBF.toFixed(1)}%
-            </li>
-            <li>
-              <strong>Massa grassa:</strong>
-              {((weight * resultBF) / 100).toFixed(1)} kg
-            </li>
-            <li>
-              <strong>Massa magra:</strong>
-              {(weight - (weight * resultBF) / 100).toFixed(1)} kg
-            </li>
-          </ul>
-        </div>
-      )}
-    </div>
+      </CardFooter>
+    </Card>
   );
 }

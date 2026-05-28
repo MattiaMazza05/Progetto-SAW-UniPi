@@ -1,51 +1,18 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import {loginUser} from "../firebase/auth";
-import { Button, Card, Label, TextInput } from "flowbite-react";
+import { GalleryVerticalEnd } from "lucide-react"
+import { LoginForm } from "../components/login-form"
 
-export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const navigate = useNavigate();
-
-  async function handleLogin(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    try {
-      setError("");
-      await loginUser(email, password);
-      navigate("/dashboard");
-    } catch (error) {
-      setError("Email e password errati");
-    }
-  }
+export default function LoginPage() {
   return (
-      <Card className="max-w-sm">
-      <form onSubmit={handleLogin} className="flex flex-col gap-4">
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="email1">Email</Label>
+    <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
+      <div className="flex w-full max-w-sm flex-col gap-6">
+        <a href="#" className="flex items-center gap-2 self-center font-medium">
+          <div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
+            <GalleryVerticalEnd className="size-4" />
           </div>
-          <TextInput
-            id="email1"
-            type="email"
-            placeholder="Inserisci la tua mail"
-            required
-            onChange={(event) => setEmail(event.target.value)}
-            value={email}
-          />
-        </div>
-        <div>
-          <div className="mb-2 block">
-            <Label htmlFor="password1">Password</Label>
-          </div>
-          <TextInput id="password1" type="password" required onChange={(event) => setPassword(event.target.value)} value={password} />
-        </div>
-        {error && <p className="text-red-600">{error}</p>}
-        <Button type="submit">Login</Button>
-        Non hai un account? <Link to="/register">Registrati</Link>
-      </form>
-    </Card>
-  );
+          Mattia WebApp
+        </a>
+        <LoginForm />
+      </div>
+    </div>
+  )
 }

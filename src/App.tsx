@@ -3,8 +3,8 @@ import Dashboard from "./pages/Dashboard";
 import Checklist from "./pages/Checklist";
 import Measurements from "./pages/Measurements";
 import Workouts from "./pages/Workouts";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
+import LoginPage from "./pages/Login";
+import SignupPage from "./pages/Register";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { useAuth } from "../src/context/AuthContext";
 import { logoutUser } from "./firebase/auth";
@@ -50,7 +50,6 @@ function NavigationBar() {
         >
           <DropdownHeader>
             <span className="block text-sm">
-              {/* inserisci nome effettivo */}
             </span>
             <span className="block truncate text-sm font-medium">
               {currentUser.email}
@@ -100,9 +99,9 @@ function App() {
     <BrowserRouter>
       <NavigationBar />
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<SignupPage />} />
         <Route
           path="/dashboard"
           element={
