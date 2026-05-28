@@ -8,6 +8,7 @@ import SignupPage from "./pages/Register";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { useAuth } from "../src/context/AuthContext";
 import { logoutUser } from "./firebase/auth";
+import { BottomNav } from "./components/BottonNav";
 import {
   Avatar,
   Dropdown,
@@ -98,6 +99,7 @@ function App() {
   return (
     <BrowserRouter>
       <NavigationBar />
+      <BottomNav />
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
