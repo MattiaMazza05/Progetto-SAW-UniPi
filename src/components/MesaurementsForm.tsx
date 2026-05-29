@@ -12,6 +12,7 @@ import React, { useState } from "react";
 import { doc, getDoc, addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "../firebase/config";
 import { useAuth } from "../context/AuthContext";
+import { Spinner } from "./ui/spinner";
 
 export default function MesaurementsForm() {
   const [weight, setWeight] = useState(0);
@@ -24,7 +25,7 @@ export default function MesaurementsForm() {
   const [isCalculating, setIsCalculating] = useState(false);
   const [fatMass, setFatMass] = useState(0);
   const [leanMass, setLeanMass] = useState(0);
-  
+
   async function BodyFatCalculator(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!currentUser) return;
@@ -96,7 +97,7 @@ export default function MesaurementsForm() {
       <CardContent>
         <form onSubmit={BodyFatCalculator} id="measurement-form">
           <div className="flex flex-col gap-6">
-            <div className="grid gap-2" >
+            <div className="grid gap-2">
               <Label htmlFor="date">Data</Label>
               <Input
                 id="date"
@@ -161,8 +162,13 @@ export default function MesaurementsForm() {
         </form>
       </CardContent>
       <CardFooter className="flex-col gap-2">
-        <Button form="measurement-form" type="submit" disabled={isCalculating} className="w-full">
-          {isCalculating ? "Caricamento" : "Calcola e inserisci"}
+        <Button
+          form="measurement-form"
+          type="submit"
+          disabled={isCalculating}
+          className="w-full"
+        >
+          {isCalculating ? <Spinner data-icon="inline-start" /> : "Calcola e inserisci"}
         </Button>
       </CardFooter>
     </Card>

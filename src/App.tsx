@@ -21,6 +21,7 @@ import {
   NavbarLink,
   NavbarToggle,
 } from "flowbite-react";
+import { Toaster } from "sonner";
 
 function NavigationBar() {
   const { currentUser } = useAuth();
@@ -69,7 +70,6 @@ function NavigationBar() {
         <NavbarToggle />
       </div>
       <NavbarCollapse>
-        {/* NavbarLink agisce come wrapper grafico per gli stili, il Link gestisce la rotta in autonomia */}
         <NavbarLink as="div">
           <Link to="/dashboard" className="block w-full">
             Dashboard
@@ -99,7 +99,6 @@ function App() {
   return (
     <BrowserRouter>
       <NavigationBar />
-      <BottomNav />
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -137,6 +136,10 @@ function App() {
           }
         />
       </Routes>
+      <ProtectedRoute>
+      <BottomNav />
+      </ProtectedRoute>
+      <Toaster/>
     </BrowserRouter>
   );
 }

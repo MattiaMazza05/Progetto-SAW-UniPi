@@ -1,5 +1,7 @@
 import MesaurementsForm from "../components/MesaurementsForm";
 import { MesaurementsTable } from "../components/MesaurementsTable";
+import { ChartBarDemoLegend } from "@/components/MesaurementsChart";
+
 
 export default function Measurements() {
   return (
@@ -12,9 +14,6 @@ export default function Measurements() {
       </p>
       <MesaurementsForm />
       <MesaurementsTable />
-
-      {/* In futuro potrai facilmente aggiungere la tabella dello storico o il grafico qui sotto */}
-      {/* <WeightChart /> */}
     </div>
   );
 }
