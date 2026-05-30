@@ -51,8 +51,7 @@ function NavigationBar() {
           }
         >
           <DropdownHeader>
-            <span className="block text-sm">
-            </span>
+            <span className="block text-sm"></span>
             <span className="block truncate text-sm font-medium">
               {currentUser.email}
             </span>
@@ -96,6 +95,7 @@ function NavigationBar() {
 }
 
 function App() {
+  const { currentUser } = useAuth();
   return (
     <BrowserRouter>
       <NavigationBar />
@@ -136,10 +136,8 @@ function App() {
           }
         />
       </Routes>
-      <ProtectedRoute>
-      <BottomNav />
-      </ProtectedRoute>
-      <Toaster/>
+      {currentUser && <BottomNav />}
+      <Toaster />
     </BrowserRouter>
   );
 }
