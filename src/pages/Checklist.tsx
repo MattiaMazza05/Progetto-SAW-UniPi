@@ -22,6 +22,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useAuth } from "@/context/AuthContext";
+import { db } from "@/firebase/config";
+import { doc, getDoc, addDoc, collection, setDoc } from "firebase/firestore";
 
 interface Habits {
   id: string;
@@ -31,8 +34,9 @@ interface Habits {
 }
 
 export default function Checklist() {
-  const [userHabis, setUserHabits] = useState<Habits[]>([]);
+  const [userHabits, setUserHabits] = useState<Habits[]>([]);
   const [habitDescription, setHabitDescription] = useState("");
+
   function addHabits(description: string) {
     const h: Habits = {
       id: crypto.randomUUID(),
@@ -40,18 +44,18 @@ export default function Checklist() {
       completed: false,
       consecutiveStreak: 0,
     };
-    setUserHabits((v) => [...v, h]);
+    const newHabitsArray = [...userHabits, h];
+    setUserHabits(newHabitsArray);
+    saveHabits(newHabitsArray);
   }
-  
-  const [selectedRows, setSelectedRows] = useState<Set<string>>(
-    new Set(["1"]),
-  );
 
-  const selectAll = selectedRows.size === userHabis.length;
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set(["1"]));
+
+  const selectAll = selectedRows.size === userHabits.length;
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      setSelectedRows(new Set(userHabis.map((row) => row.id)));
+      setSelectedRows(new Set(userHabits.map((row) => row.id)));
     } else {
       setSelectedRows(new Set());
     }
@@ -66,6 +70,26 @@ export default function Checklist() {
     }
     setSelectedRows(newSelected);
   };
+  const { currentUser } = useAuth();
+  async function saveHabits(arrayHabits: Habits[]) {
+    if (!currentUser) return;
+    const userDocRef = doc(db, "userData", currentUser.uid);
+    const habitsToSave = arrayHabits.map(
+      ({ description, completed, consecutiveStreak }) => ({
+        description,
+        completed,
+        consecutiveStreak,
+      }),
+    );
+    try {
+      await setDoc(userDocRef, {
+        habitsList: habitsToSave,
+      });
+    } catch (error) {
+      console.error("Errore durante il salvataggio: ", error);
+    }
+  }
+
   return (
     <>
       <div className="p-4">
@@ -102,7 +126,7 @@ export default function Checklist() {
         </AlertDialogContent>
       </AlertDialog>
       <ul>
-        {userHabis.map((entry) => (
+        {userHabits.map((entry) => (
           <li>Hai inserito: {entry.description}</li>
         ))}
       </ul>
@@ -122,7 +146,7 @@ export default function Checklist() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {userHabis.map((row) => (
+          {userHabits.map((row) => (
             <TableRow
               key={row.id}
               data-state={selectedRows.has(row.id) ? "selected" : undefined}

@@ -24,12 +24,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     return unsubscribe;
   }, []);
-
-  return (
-    <AuthContext.Provider value={{ currentUser, loading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  const value = {
+    currentUser,
+    loading,
+  };
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
