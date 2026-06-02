@@ -6,6 +6,7 @@ import Workouts from "./pages/Workouts";
 import LoginPage from "./pages/Login";
 import SignupPage from "./pages/Register";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import PublicRoute from "./routes/PublicRoute";
 import { useAuth } from "../src/context/AuthContext";
 import { logoutUser } from "./firebase/auth";
 import { BottomNav } from "./components/BottonNav";
@@ -97,49 +98,25 @@ function NavigationBar() {
 function App() {
   const { currentUser } = useAuth();
   return (
-    <BrowserRouter>
+<BrowserRouter>
       <NavigationBar />
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<SignupPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <Dashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/measurements"
-          element={
-            <ProtectedRoute>
-              <Measurements />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/checklist"
-          element={
-            <ProtectedRoute>
-              <Checklist />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/workouts"
-          element={
-            <ProtectedRoute>
-              <Workouts />
-            </ProtectedRoute>
-          }
-        />
+        <Route element={<PublicRoute />}>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<SignupPage />} />
+        </Route>
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/measurements" element={<Measurements />} />
+          <Route path="/checklist" element={<Checklist />} />
+          <Route path="/workouts" element={<Workouts />} />
+        </Route>
       </Routes>
       {currentUser && <BottomNav />}
       <Toaster />
-    </BrowserRouter>
-  );
+    </BrowserRouter>  );
 }
 
 export default App;

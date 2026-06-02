@@ -3,6 +3,8 @@ import{
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    signInWithPopup,
+    GoogleAuthProvider,
 } from "firebase/auth";
 
 import { auth } from "./config";
@@ -22,3 +24,8 @@ export function authState(callback: (user: any) => void){
     return onAuthStateChanged(auth, callback);
 }
 
+export function googleLogin(){
+    const provider = new GoogleAuthProvider();
+    return signInWithPopup(auth, provider);
+    
+}
