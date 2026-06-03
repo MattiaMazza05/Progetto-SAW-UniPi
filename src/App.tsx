@@ -12,6 +12,7 @@ import BottomNav from "./components/layout/BottonNav";
 import { Toaster } from "sonner";
 import UserInformation from "./pages/UserInformation";
 import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 function AppBottomNav() {
   const { currentUser } = useAuth();
@@ -24,6 +25,15 @@ function AppBottomNav() {
   return <BottomNav />;
 }
 function App() {
+  useEffect(() => {
+  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+  if (prefersDark) {
+    document.documentElement.classList.add("dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+  }
+}, []);
   return (
     <BrowserRouter>
       <Routes>

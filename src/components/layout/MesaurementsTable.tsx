@@ -5,7 +5,6 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableCaption,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
@@ -37,7 +36,7 @@ export function MesaurementsTable() {
   }
   return (
     <Table>
-      <TableCaption>I tuoi dati</TableCaption>
+      {" "}
       <TableHeader>
         <TableRow>
           <TableHead className="w-3">Elimina</TableHead>

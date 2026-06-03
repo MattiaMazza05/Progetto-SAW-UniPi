@@ -76,13 +76,14 @@ export default function Checklist() {
       return;
     }
     //TODO levare questa funzione prima di deploy
-     function createId() { //mi serve solo in fase di sviluppo
-     if (crypto.randomUUID) {
-       return crypto.randomUUID();
-     }
-   
-     return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-   }
+    function createId() {
+      //mi serve solo in fase di sviluppo
+      if (crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
+
+      return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    }
 
     const newHabit: Habits = {
       id: createId(),
@@ -139,56 +140,61 @@ export default function Checklist() {
   }
 
   return (
-    <>
-      <div className="p-4">
-        <h1 className="text-2xl font-bold dark:text-white">
-          Abitudini Alimentari
-        </h1>
-        <p className="dark:text-gray-300">
-          Benvenuto nella tua sezione checklist.
-        </p>
-      </div>
-      <Dialog>
-        <DialogTrigger asChild>
-          <Button variant="outline">
-            <CirclePlus />
-            Nuovo
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-sm">
-          <form onSubmit={handleSubmit} className="grid gap-6">
-            <DialogHeader>
-              <DialogTitle>Nuova Abitudine</DialogTitle>
-              <DialogDescription>
-                Inserisci una nuova abitudine, clicca su Aggiungi e poi Chiudi.
-              </DialogDescription>
-            </DialogHeader>
-            <FieldGroup>
-              <Field>
-                <Input
-                  id="habit-1"
-                  name="habit"
-                  value={habitDescription}
-                  placeholder="es. 20gr di olio al giorno"
-                  onChange={(event) => setHabitDescription(event.target.value)}
-                />
-                {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-              </Field>
-            </FieldGroup>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Chiudi</Button>
-              </DialogClose>
-              <Button type="submit">Aggiungi</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-      <CheckListTable
-        habits={userHabits}
-        today={today}
-        onToggleHabit={toggleHabit}
-      />
-    </>
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24">
+      <section>
+        <h1 className="text-2xl font-bold">Abitudini Alimentari</h1>
+      </section>
+      <section>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button>
+              <CirclePlus />
+              Nuovo
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-sm">
+            <form onSubmit={handleSubmit} className="grid gap-6">
+              <DialogHeader>
+                <DialogTitle>Nuova Abitudine</DialogTitle>
+                <DialogDescription>
+                  Inserisci una nuova abitudine, clicca su Aggiungi e poi
+                  Chiudi.
+                </DialogDescription>
+              </DialogHeader>
+              <FieldGroup>
+                <Field>
+                  <Input
+                    id="habit-1"
+                    name="habit"
+                    value={habitDescription}
+                    placeholder="es. 20gr di olio al giorno"
+                    onChange={(event) =>
+                      setHabitDescription(event.target.value)
+                    }
+                  />
+                  {error && (
+                    <p className="mt-2 text-sm text-red-600">{error}</p>
+                  )}
+                </Field>
+              </FieldGroup>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Chiudi</Button>
+                </DialogClose>
+                <Button type="submit">Aggiungi</Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
+      </section>
+
+      <section>
+        <CheckListTable
+          habits={userHabits}
+          today={today}
+          onToggleHabit={toggleHabit}
+        />
+      </section>
+    </main>
   );
 }
