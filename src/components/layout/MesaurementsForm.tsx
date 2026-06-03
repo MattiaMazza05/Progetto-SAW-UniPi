@@ -10,9 +10,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
 import { doc, getDoc, addDoc, collection, Timestamp } from "firebase/firestore";
-import { db } from "../firebase/config";
-import { useAuth } from "../context/AuthContext";
-import { Spinner } from "./ui/spinner";
+import { db } from "@/firebase/config";
+import { useAuth } from "@/context/AuthContext";
+import { Spinner } from "../ui/spinner";
 
 export default function MesaurementsForm() {
   const [weight, setWeight] = useState(0);

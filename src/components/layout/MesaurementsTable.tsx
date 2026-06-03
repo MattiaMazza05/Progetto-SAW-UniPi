@@ -7,7 +7,7 @@ import {
   TableRow,
   TableCaption
 } from "@/components/ui/table";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import {
   onSnapshot,
   collection,
@@ -16,8 +16,8 @@ import {
   deleteDoc,
   doc,
 } from "firebase/firestore";
-import { db } from "../firebase/config";
-import { useAuth } from "../context/AuthContext";
+import { db } from "@/firebase/config";
+import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";

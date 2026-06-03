@@ -12,94 +12,130 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CirclePlus } from "lucide-react";
-import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/firebase/config";
-import { doc, getDoc, addDoc, collection, setDoc } from "firebase/firestore";
+import { doc, onSnapshot, setDoc } from "firebase/firestore";
+import { CheckListTable } from "@/components/layout/ChecklistTable";
 
-interface Habits {
+export interface Habits {
   id: string;
   description: string;
-  completed: boolean;
-  consecutiveStreak: number;
+  lastCompletedDate: string | null;
+  streak: number;
 }
 
 export default function Checklist() {
+  const { currentUser } = useAuth();
   const [userHabits, setUserHabits] = useState<Habits[]>([]);
   const [habitDescription, setHabitDescription] = useState("");
+  const [error, setError] = useState("");
 
-  function addHabits(description: string) {
-    const h: Habits = {
-      id: crypto.randomUUID(),
-      description,
-      completed: false,
-      consecutiveStreak: 0,
-    };
-    const newHabitsArray = [...userHabits, h];
-    setUserHabits(newHabitsArray);
-    saveHabits(newHabitsArray);
-  }
+  const today = new Date().toISOString().split("T")[0];
 
-  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set(["1"]));
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const yesterday = yesterdayDate.toISOString().split("T")[0];
 
-  const selectAll = selectedRows.size === userHabits.length;
-
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedRows(new Set(userHabits.map((row) => row.id)));
-    } else {
-      setSelectedRows(new Set());
+  useEffect(() => {
+    if (!currentUser) {
+      setUserHabits([]);
+      return;
     }
-  };
 
-  const handleSelectRow = (id: string, checked: boolean) => {
-    const newSelected = new Set(selectedRows);
-    if (checked) {
-      newSelected.add(id);
-    } else {
-      newSelected.delete(id);
-    }
-    setSelectedRows(newSelected);
-  };
-  const { currentUser } = useAuth();
+    const userDocRef = doc(db, "userData", currentUser.uid);
+
+    const unsubscribe = onSnapshot(userDocRef, (docSnap) => {
+      if (docSnap.exists() && docSnap.data().habitsList) {
+        setUserHabits(docSnap.data().habitsList);
+      } else {
+        setUserHabits([]);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
   async function saveHabits(arrayHabits: Habits[]) {
     if (!currentUser) return;
+
     const userDocRef = doc(db, "userData", currentUser.uid);
-    const habitsToSave = arrayHabits.map(
-      ({ description, completed, consecutiveStreak }) => ({
-        description,
-        completed,
-        consecutiveStreak,
-      }),
+
+    await setDoc(
+      userDocRef,
+      {
+        habitsList: arrayHabits,
+      },
+      { merge: true },
     );
-    try {
-      await setDoc(userDocRef, {
-        habitsList: habitsToSave,
-      });
-    } catch (error) {
-      console.error("Errore durante il salvataggio: ", error);
+  }
+
+  async function addHabits(description: string) {
+    if (description.trim() === "") {
+      setError("Inserisci una descrizione");
+      return;
     }
+
+    const newHabit: Habits = {
+      id: crypto.randomUUID(),
+      description: description.trim(),
+      lastCompletedDate: null,
+      streak: 0,
+    };
+
+    const newHabitsArray = [...userHabits, newHabit];
+
+    setUserHabits(newHabitsArray);
+    setHabitDescription("");
+    setError("");
+
+    await saveHabits(newHabitsArray);
+  }
+
+  async function toggleHabit(clickedHabit: Habits) {
+    const newHabitsArray = userHabits.map((habit) => {
+      if (habit.id !== clickedHabit.id) {
+        return habit;
+      }
+
+      let newStreak = habit.streak;
+      let newDate = habit.lastCompletedDate;
+
+      if (habit.lastCompletedDate !== today) {
+        newDate = today;
+
+        if (habit.lastCompletedDate === yesterday) {
+          newStreak += 1;
+        } else {
+          newStreak = 1;
+        }
+      } else {
+        newDate = habit.streak > 1 ? yesterday : null;
+        newStreak = habit.streak > 0 ? habit.streak - 1 : 0;
+      }
+
+      return {
+        ...habit,
+        streak: newStreak,
+        lastCompletedDate: newDate,
+      };
+    });
+
+    setUserHabits(newHabitsArray);
+    await saveHabits(newHabitsArray);
   }
 
   return (
     <>
       <div className="p-4">
         <h1 className="text-2xl font-bold dark:text-white">
-          Abituidini Alimentari
+          Abitudini Alimentari
         </h1>
         <p className="dark:text-gray-300">
           Benvenuto nella tua sezione checklist.
         </p>
       </div>
+
       <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant="outline">
@@ -107,16 +143,24 @@ export default function Checklist() {
             Nuovo
           </Button>
         </AlertDialogTrigger>
+
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Cosa vuoi tenere sott'occhio?</AlertDialogTitle>
             <AlertDialogDescription>
               <Input
                 required
-                onChange={(event) => setHabitDescription(event.target.value)}
+                value={habitDescription}
+                onChange={(event) => {
+                  setHabitDescription(event.target.value);
+                  setError("");
+                }}
               />
+
+              {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
             </AlertDialogDescription>
           </AlertDialogHeader>
+
           <AlertDialogFooter>
             <AlertDialogCancel>Annulla</AlertDialogCancel>
             <AlertDialogAction onClick={() => addHabits(habitDescription)}>
@@ -125,48 +169,12 @@ export default function Checklist() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <ul>
-        {userHabits.map((entry) => (
-          <li>Hai inserito: {entry.description}</li>
-        ))}
-      </ul>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-8">
-              <Checkbox
-                id="select-all-checkbox"
-                name="select-all-checkbox"
-                checked={selectAll}
-                onCheckedChange={handleSelectAll}
-              />
-            </TableHead>
-            <TableHead>Nome</TableHead>
-            <TableHead>Streak consecutive</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {userHabits.map((row) => (
-            <TableRow
-              key={row.id}
-              data-state={selectedRows.has(row.id) ? "selected" : undefined}
-            >
-              <TableCell>
-                <Checkbox
-                  id={`row-${row.id}-checkbox`}
-                  name={`row-${row.id}-checkbox`}
-                  checked={selectedRows.has(row.id)}
-                  onCheckedChange={(checked) =>
-                    handleSelectRow(row.id, checked === true)
-                  }
-                />
-              </TableCell>
-              <TableCell className="font-medium">{row.description}</TableCell>
-              <TableCell>{row.consecutiveStreak}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+
+      <CheckListTable
+        habits={userHabits}
+        today={today}
+        onToggleHabit={toggleHabit}
+      />
     </>
   );
 }

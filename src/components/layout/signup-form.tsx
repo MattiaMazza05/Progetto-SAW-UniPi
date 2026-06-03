@@ -24,9 +24,9 @@ import {
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { registerUser } from "../firebase/auth";
+import { registerUser } from "@/firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
-import { db } from "../firebase/config";
+import { db } from "@/firebase/config";
 
 export function SignupForm({
   className,

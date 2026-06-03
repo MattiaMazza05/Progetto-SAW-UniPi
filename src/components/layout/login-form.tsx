@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { googleLogin, loginUser } from "../firebase/auth";
+import { googleLogin, loginUser } from "@/firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 
 export function LoginForm({

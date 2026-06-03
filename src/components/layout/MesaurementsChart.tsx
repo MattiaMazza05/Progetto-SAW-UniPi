@@ -8,8 +8,8 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
-import { db } from "../firebase/config";
-import { useAuth } from "../context/AuthContext";
+import { db } from "@/firebase/config";
+import { useAuth } from "@/context/AuthContext";
 import { useEffect, useState } from "react";
 import {
   onSnapshot,

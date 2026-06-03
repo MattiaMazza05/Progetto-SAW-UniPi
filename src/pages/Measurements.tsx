@@ -1,6 +1,6 @@
-import MesaurementsForm from "../components/MesaurementsForm";
-import { MesaurementsTable } from "../components/MesaurementsTable";
-import { ChartBarDemoLegend } from "@/components/MesaurementsChart";
+import MesaurementsForm from "../components/layout/MesaurementsForm";
+import { MesaurementsTable } from "../components/layout/MesaurementsTable";
+import { ChartBarDemoLegend } from "@/components/layout/MesaurementsChart";
 
 
 export default function Measurements() {
