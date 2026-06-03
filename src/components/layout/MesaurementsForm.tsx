@@ -1,11 +1,15 @@
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { CirclePlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
@@ -13,6 +17,7 @@ import { doc, getDoc, addDoc, collection, Timestamp } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { useAuth } from "@/context/AuthContext";
 import { Spinner } from "../ui/spinner";
+import { toast } from "sonner";
 
 export default function MesaurementsForm() {
   const [weight, setWeight] = useState(0);
@@ -21,10 +26,7 @@ export default function MesaurementsForm() {
   const [hips, setHips] = useState(0);
   const [date, setDate] = useState("");
   const { currentUser } = useAuth();
-  const [resultBF, setResultBf] = useState<number | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [fatMass, setFatMass] = useState(0);
-  const [leanMass, setLeanMass] = useState(0);
 
   async function BodyFatCalculator(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -37,13 +39,40 @@ export default function MesaurementsForm() {
 
       if (docSnap.exists()) {
         const userData = docSnap.data();
+
+        const height = Number(userData.height);
+        const gender = String(userData.gender);
+        console.log({
+          height,
+          gender,
+          weight,
+          neck,
+          waist,
+          hips,
+        });
+        if (!Number.isFinite(height) || height <= 0) {
+          toast.error("Altezza non valida", {
+            description: "Controlla il valore dell'altezza nel profilo.",
+            position: "top-center",
+          });
+          return;
+        }
         //converto in inch sennò formula da valore diverso
-        const hInch = userData.height / 2.54;
+        const hInch = height / 2.54;
         const wInch = waist / 2.54;
         const nInch = neck / 2.54;
         const hipsInch = hips / 2.54;
         let bf = 0;
-        if (userData.sex == "Uomo") {
+        console.log("Dati formula:", {
+          height: userData.height,
+          heightNumber: Number(userData.height),
+          sex: userData.sex,
+          weight,
+          neck,
+          waist,
+          hips,
+        });
+        if (gender == "Uomo") {
           bf =
             86.01 * Math.log10(wInch - nInch) -
             70.041 * Math.log10(hInch) +
@@ -54,12 +83,19 @@ export default function MesaurementsForm() {
             97.684 * Math.log10(hInch) -
             78.387;
         }
-        setResultBf(bf);
         const fatMass = weight * (bf / 100);
         const leanMass = weight - fatMass;
-        setFatMass(fatMass);
-        setLeanMass(leanMass);
+        if (!Number.isFinite(bf)) {
+          toast.error("Calcolo non valido", {
+            description: "Uno dei dati inseriti non permette il calcolo.",
+            position: "top-center",
+          });
+          return;
+        }
         await saveMesaurements(bf, fatMass, leanMass);
+        toast.success("Misurazione salvata.", {
+          position: "top-center",
+        });
       }
     } catch (error) {
       console.error("Errore nel calcolo", error);
@@ -73,7 +109,7 @@ export default function MesaurementsForm() {
     lmValue: number,
   ) {
     if (!currentUser) return;
-    const docRef = await addDoc(
+    await addDoc(
       collection(db, "userData", currentUser.uid, "mesaurementsHistory"),
       {
         //salvo lo storico in una subcollection legata all'user uid
@@ -90,87 +126,108 @@ export default function MesaurementsForm() {
     );
   }
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Inserisci i tuoi dati</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={BodyFatCalculator} id="measurement-form">
-          <div className="flex flex-col gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="date">Data</Label>
-              <Input
-                id="date"
-                type="date"
-                onChange={(event) => setDate(event.target.value)}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="weight">Peso</Label>
+    <>
+      <Dialog>
+        <DialogTrigger asChild>
+          <Button variant="outline">
+            <CirclePlus />
+            Nuovo
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <form
+            onSubmit={BodyFatCalculator}
+            id="measurement-form"
+            className="grid gap-6"
+          >
+            <DialogHeader>
+              <DialogTitle>Nuova Misurazione</DialogTitle>
+              <DialogDescription>
+                Inserisci i dati, clicca su Calcola e poi Chiudi.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="date">Data</Label>
+                <Input
+                  id="date"
+                  type="date"
+                  onChange={(event) => setDate(event.target.value)}
+                  required
+                />
               </div>
-              <Input
-                id="weight"
-                type="number"
-                step="0.1"
-                placeholder="espresso in kg"
-                onChange={(event) => setWeight(Number(event.target.value))}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="NeckC">Circonferenza collo</Label>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="weight">Peso</Label>
+                </div>
+                <Input
+                  id="weight"
+                  type="number"
+                  step="0.1"
+                  placeholder="espresso in kg"
+                  onChange={(event) => setWeight(Number(event.target.value))}
+                  required
+                />
               </div>
-              <Input
-                id="NeckC"
-                type="number"
-                step="0.1"
-                placeholder="espresso in cm"
-                onChange={(event) => setNeck(Number(event.target.value))}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="WaistC">Circonferenza vita</Label>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="NeckC">Circonferenza collo</Label>
+                </div>
+                <Input
+                  id="NeckC"
+                  type="number"
+                  step="0.1"
+                  placeholder="espresso in cm"
+                  onChange={(event) => setNeck(Number(event.target.value))}
+                  required
+                />
               </div>
-              <Input
-                id="WaistC"
-                type="number"
-                step="0.1"
-                placeholder="espresso in cm"
-                onChange={(event) => setWaist(Number(event.target.value))}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="HipsC">Circonferenza fianchi</Label>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="WaistC">Circonferenza vita</Label>
+                </div>
+                <Input
+                  id="WaistC"
+                  type="number"
+                  step="0.1"
+                  placeholder="espresso in cm"
+                  onChange={(event) => setWaist(Number(event.target.value))}
+                  required
+                />
               </div>
-              <Input
-                id="HipsC"
-                type="number"
-                step="0.1"
-                placeholder="espresso in cm"
-                onChange={(event) => setHips(Number(event.target.value))}
-                required
-              />
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="HipsC">Circonferenza fianchi</Label>
+                </div>
+                <Input
+                  id="HipsC"
+                  type="number"
+                  step="0.1"
+                  placeholder="espresso in cm"
+                  onChange={(event) => setHips(Number(event.target.value))}
+                  required
+                />
+              </div>
             </div>
-          </div>
-        </form>
-      </CardContent>
-      <CardFooter className="flex-col gap-2">
-        <Button
-          form="measurement-form"
-          type="submit"
-          disabled={isCalculating}
-          className="w-full"
-        >
-          {isCalculating ? <Spinner data-icon="inline-start" /> : "Calcola e inserisci"}
-        </Button>
-      </CardFooter>
-    </Card>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Chiudi</Button>
+              </DialogClose>
+              <Button
+                form="measurement-form"
+                type="submit"
+                disabled={isCalculating}
+              >
+                {isCalculating ? (
+                  <Spinner data-icon="inline-start" />
+                ) : (
+                  "Calcola"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

@@ -5,60 +5,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableCaption
+  TableCaption,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
-import {
-  onSnapshot,
-  collection,
-  query,
-  orderBy,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
-import { db } from "@/firebase/config";
-import { useAuth } from "@/context/AuthContext";
-import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useMeasurementsHistory } from "@/hooks/useMesauremetsHistory";
+import { db } from "@/firebase/config";
+import { doc, deleteDoc } from "firebase/firestore";
+import { useAuth } from "@/context/AuthContext";
 //creo un interfaccia per i dati
 //ho usato l'AI per aiutarmi nella creazione della tabella dinamica e per la creazione della query
-export interface MesauremetType {
-  id: string;
-  dateInput: string;
-  weight: number;
-  neck: number;
-  waist: number;
-  hips: number;
-  bfP: number;
-  fatMass: number;
-  leanMass: number;
-}
 
 export function MesaurementsTable() {
+  const dataHistory = useMeasurementsHistory(false);
   const { currentUser } = useAuth();
-  const [dataHistory, setDataHistory] = useState<MesauremetType[]>([]);
-  useEffect(() => {
-    if (!currentUser) return;
-    const mesaurementsRef = collection(
-      db,
-      "userData",
-      currentUser.uid,
-      "mesaurementsHistory",
-    );
-    const q = query(mesaurementsRef, orderBy("timeStamp", "asc"));
-
-    const unsub = onSnapshot(q, (querySnapshot) => {
-      const rawData = querySnapshot.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-        } as MesauremetType;
-      });
-      setDataHistory(rawData);
-    });
-    return () => unsub();
-  }, [currentUser]);
   async function deleteData(id: string) {
     if (!currentUser) return;
     const docRef = doc(
@@ -69,6 +30,10 @@ export function MesaurementsTable() {
       id,
     );
     await deleteDoc(docRef);
+  }
+  function formatDate(date: string) {
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
   }
   return (
     <Table>
@@ -103,7 +68,9 @@ export function MesaurementsTable() {
                 <Trash2 />
               </Button>
             </TableCell>
-            <TableCell className="font-medium">{entry.dateInput}</TableCell>
+            <TableCell className="font-medium">
+              {formatDate(entry.dateInput)}
+            </TableCell>
             <TableCell>{entry.weight}</TableCell>
             <TableCell>{entry.neck}</TableCell>
             <TableCell>{entry.waist}</TableCell>

@@ -18,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { googleLogin, loginUser } from "@/firebase/auth";
-import { GoogleAuthProvider } from "firebase/auth";
 
 export function LoginForm({
   className,
@@ -32,6 +31,7 @@ export function LoginForm({
     try{
       const userCredential = await googleLogin();
       console.log("Utente loggato: ", userCredential.user);
+      navigate("/dashboard")
     }catch(error){
       console.error("Errore dutante il login con google: ", error);
     }
@@ -51,8 +51,8 @@ export function LoginForm({
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
-          <CardDescription>Login con il tuo account Google</CardDescription>
+          <CardTitle className="text-xl">Ben Tornato </CardTitle>
+          <CardDescription>Login con il tuo account Google o con email e password</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin}>
@@ -65,18 +65,18 @@ export function LoginForm({
                       fill="currentColor"
                     />
                   </svg>
-                  Login with Google
+                  Login con Google
                 </Button>
               </Field>
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                Or continue with
+                Oppure continua con 
               </FieldSeparator>
               <Field>
                 <FieldLabel htmlFor="email">Email</FieldLabel>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Inserisci la tua mail"
+                  placeholder="nome@provider.com"
                   required
                   onChange={(event) => setEmail(event.target.value)}
                   value={email}

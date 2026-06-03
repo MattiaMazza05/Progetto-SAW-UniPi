@@ -8,28 +8,40 @@ import SignupPage from "./pages/Register";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import { useAuth } from "../src/context/AuthContext";
-import { logoutUser } from "./firebase/auth";
 import BottomNav from "./components/layout/BottonNav";
 import { Toaster } from "sonner";
-function App() {
+import UserInformation from "./pages/UserInformation";
+import { useLocation } from "react-router-dom";
+
+function AppBottomNav() {
   const { currentUser } = useAuth();
+  const location = useLocation();
+
+  if (!currentUser) return null;
+
+  if (location.pathname == "/userInfo") return null;
+
+  return <BottomNav />;
+}
+function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<PublicRoute />}>
           <Route path="/" element={<LoginPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<SignupPage />} />
         </Route>
+        <Route path="/register" element={<SignupPage />} />
 
         <Route element={<ProtectedRoute />}>
+          <Route path="/userInfo" element={<UserInformation />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/measurements" element={<Measurements />} />
           <Route path="/checklist" element={<Checklist />} />
           <Route path="/workouts" element={<Workouts />} />
         </Route>
       </Routes>
-      {currentUser && <BottomNav />}
+      <AppBottomNav />
       <Toaster />
     </BrowserRouter>
   );

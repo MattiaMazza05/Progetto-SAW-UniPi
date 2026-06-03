@@ -1,8 +1,7 @@
 import MesaurementsForm from "../components/layout/MesaurementsForm";
 import { MesaurementsTable } from "../components/layout/MesaurementsTable";
-import { ChartBarDemoLegend } from "@/components/layout/MesaurementsChart";
-
-
+import { WeightChart } from "@/components/layout/WeightChart";
+import { BodyMassChart } from "@/components/layout/BodyMassChart";
 export default function Measurements() {
   return (
     <div className="p-4">
@@ -14,6 +13,8 @@ export default function Measurements() {
       </p>
       <MesaurementsForm />
       <MesaurementsTable />
+      <WeightChart/>
+      <BodyMassChart/>
     </div>
   );
 }

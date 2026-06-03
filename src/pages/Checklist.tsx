@@ -1,16 +1,16 @@
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Field, FieldGroup } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/context/AuthContext";
@@ -75,9 +75,17 @@ export default function Checklist() {
       setError("Inserisci una descrizione");
       return;
     }
+    //TODO levare questa funzione prima di deploy
+     function createId() { //mi serve solo in fase di sviluppo
+     if (crypto.randomUUID) {
+       return crypto.randomUUID();
+     }
+   
+     return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+   }
 
     const newHabit: Habits = {
-      id: crypto.randomUUID(),
+      id: createId(),
       description: description.trim(),
       lastCompletedDate: null,
       streak: 0,
@@ -125,6 +133,11 @@ export default function Checklist() {
     await saveHabits(newHabitsArray);
   }
 
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await addHabits(habitDescription);
+  }
+
   return (
     <>
       <div className="p-4">
@@ -135,41 +148,42 @@ export default function Checklist() {
           Benvenuto nella tua sezione checklist.
         </p>
       </div>
-
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
+      <Dialog>
+        <DialogTrigger asChild>
           <Button variant="outline">
             <CirclePlus />
             Nuovo
           </Button>
-        </AlertDialogTrigger>
-
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Cosa vuoi tenere sott'occhio?</AlertDialogTitle>
-            <AlertDialogDescription>
-              <Input
-                required
-                value={habitDescription}
-                onChange={(event) => {
-                  setHabitDescription(event.target.value);
-                  setError("");
-                }}
-              />
-
-              {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-
-          <AlertDialogFooter>
-            <AlertDialogCancel>Annulla</AlertDialogCancel>
-            <AlertDialogAction onClick={() => addHabits(habitDescription)}>
-              Inserisci
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-sm">
+          <form onSubmit={handleSubmit} className="grid gap-6">
+            <DialogHeader>
+              <DialogTitle>Nuova Abitudine</DialogTitle>
+              <DialogDescription>
+                Inserisci una nuova abitudine, clicca su Aggiungi e poi Chiudi.
+              </DialogDescription>
+            </DialogHeader>
+            <FieldGroup>
+              <Field>
+                <Input
+                  id="habit-1"
+                  name="habit"
+                  value={habitDescription}
+                  placeholder="es. 20gr di olio al giorno"
+                  onChange={(event) => setHabitDescription(event.target.value)}
+                />
+                {error && <p className="mt-2 text-sm text-red-600">{error}</p>}
+              </Field>
+            </FieldGroup>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Chiudi</Button>
+              </DialogClose>
+              <Button type="submit">Aggiungi</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
       <CheckListTable
         habits={userHabits}
         today={today}
