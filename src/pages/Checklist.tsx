@@ -141,8 +141,14 @@ export default function Checklist() {
 
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24">
-      <section>
-        <h1 className="text-2xl font-bold">Abitudini Alimentari</h1>
+      <section className="flex justify-center">
+        <h1 className=" flex text-2xl font-bold gap-2 items-center">
+          <img
+            src="custom emoji/foodChecklistEmoji.png"
+            className="h-17 w-17"
+          />
+          Diario Alimentare
+        </h1>
       </section>
       <section>
         <Dialog>

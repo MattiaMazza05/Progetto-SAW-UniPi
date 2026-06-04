@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { logoutUser } from "@/firebase/auth";
-import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -22,22 +22,92 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Pen } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
+import { db } from "@/firebase/config";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Dashboard() {
+  type UserData = {
+    fullName: string;
+    gender: string;
+    birthdate: string;
+    height: number;
+    email: string;
+    photoURL: string | null;
+  };
+
   const { currentUser } = useAuth();
-  const avatarSrc = currentUser?.photoURL ?? undefined;
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [newHeight, setNewHeight] = useState(0);
+  const [newGender, setNewGender] = useState("");
+  const [newBirthDate, setNewBirthDate] = useState("");
+  useEffect(() => {
+    if (!currentUser) return;
+    const docRef = doc(db, "userData", currentUser.uid);
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
+      if (docSnap.exists()) {
+        setUserData(docSnap.data() as UserData);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  async function heightModifier() {
+    if (!currentUser) return;
+    const docRef = doc(db, "userData", currentUser.uid);
+    await updateDoc(docRef, {
+      height: newHeight,
+    });
+    toast.success("Altezza modificata.", {
+      position: "top-center",
+    });
+  }
+
+  async function genderModifier() {
+    if (!currentUser) return;
+    const docRef = doc(db, "userData", currentUser.uid);
+    await updateDoc(docRef, {
+      gender: newGender,
+    });
+    toast.success("Sesso modificato.", {
+      position: "top-center",
+    });
+  }
+  async function birthDateModifier() {
+    if (!currentUser) return;
+    const docRef = doc(db, "userData", currentUser.uid);
+    await updateDoc(docRef, {
+      birthdate: newBirthDate,
+    });
+    toast.success("Data di Nascita modificata.", {
+      position: "top-center",
+    });
+  }
+
+  const avatarSrc = userData?.photoURL ?? undefined;
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24">
-      <section>
-        <h1>Il tuo Profilo</h1>
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24 min-h-scee">
+      <section className="flex justify-center">
+        <h1 className="text-2xl font-bold gap-2 items-center flex">
+          <img src="custom emoji/profileIcon.png" className="h-17 w-17" />
+          Il tuo profilo
+        </h1>
       </section>
       <section>
         <Card size="sm" className="mx-auto w-full max-w-sm">
           <CardHeader>
-            <CardTitle>👋 Ciao, {currentUser?.displayName}</CardTitle>
-            <CardDescription>
-              La tua mail è: {currentUser?.email}
-            </CardDescription>
+            <CardTitle>👋 Ciao, {userData?.fullName}</CardTitle>
+            <CardDescription>La tua mail è: {userData?.email}</CardDescription>
             <CardAction>
               <Avatar>
                 <AvatarImage
@@ -50,9 +120,9 @@ export default function Dashboard() {
             </CardAction>
           </CardHeader>
           <CardContent>
-            <ul>
-              <li>
-                Altezza{" "}
+            <ul className="space-y-3">
+              <li className="flex items-center justify-between">
+                Altezza: {userData?.height}
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button variant="outline">
@@ -66,30 +136,101 @@ export default function Dashboard() {
                         Inserisci la nuova altezza in centimetri.
                       </PopoverDescription>
                     </PopoverHeader>
-
                     <Field>
-                      <Input id="height" type="number" required />
+                      <Input
+                        id="height"
+                        type="number"
+                        required
+                        onChange={(event) => {
+                          setNewHeight(Number(event.target.value));
+                        }}
+                      />
                       <div className="flex gap-2">
-                        <Button type="button">Modifica</Button>
-                        <Button type="button" variant="outline">
-                          Chiudi
+                        <Button onClick={heightModifier} type="button">
+                          Modifica
                         </Button>
                       </div>
                     </Field>
                   </PopoverContent>
                 </Popover>
               </li>
-              <li>Sesso</li>
-              <li>Data di nascita</li>
-              <li>
-                <Field>
-                  <FieldLabel htmlFor="picture">Foto</FieldLabel>
-                  <Input id="picture" type="file" />
-                  <FieldDescription>Selezione una foto Utente</FieldDescription>
-                </Field>
+              <Separator />
+              <li className="flex items-center justify-between">
+                Sesso: {userData?.gender}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline">
+                      <Pen />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverHeader>
+                      <PopoverTitle>Modifica sesso</PopoverTitle>
+                      <PopoverDescription>
+                        Seleziona un'opzione.
+                      </PopoverDescription>
+                    </PopoverHeader>
+                    <Field>
+                      <Select
+                        defaultValue= {userData?.gender}
+                        onValueChange={(value) => setNewGender(value)}
+                        required
+                      >
+                        <SelectTrigger id="form-sex">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Uomo">Uomo</SelectItem>
+                          <SelectItem value="Donna">Donna</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <div className="flex gap-2">
+                        <Button onClick={genderModifier} type="button">
+                          Modifica
+                        </Button>
+                      </div>
+                    </Field>
+                  </PopoverContent>
+                </Popover>
+              </li>
+              <Separator />
+
+              <li className="flex items-center justify-between">
+                Data di nascita: {userData?.birthdate}
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline">
+                      <Pen />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverHeader>
+                      <PopoverTitle>Modifica data di nascita</PopoverTitle>
+                      <PopoverDescription>
+                        Inserisci la nuova data di nascita.
+                      </PopoverDescription>
+                    </PopoverHeader>
+                    <Field>
+                      <Input
+                        id="birthday"
+                        type="date"
+                        required
+                        onChange={(event) =>
+                          setNewBirthDate(event.target.value)
+                        }
+                      />
+                      <div className="flex gap-2">
+                        <Button onClick={birthDateModifier} type="button">
+                          Modifica
+                        </Button>
+                      </div>
+                    </Field>
+                  </PopoverContent>
+                </Popover>
               </li>
             </ul>
           </CardContent>
+          <Separator />
           <CardFooter className="flex-col gap-2">
             <Button
               onClick={logoutUser}

@@ -3,22 +3,19 @@ import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { useAuth } from "@/context/AuthContext";
 
-export interface MesauremetType {
+export interface WorkoutType {
   id: string;
-  dateInput: string;
-  weight: number;
-  neck: number;
-  waist: number;
-  hips: number;
-  bfP: number;
-  fatMass: number;
-  leanMass: number;
+  date: string;
+  distance: number | null;
+  duration: number;
+  title: string;
+  type: string;
+  volume: number | null;
 }
 
-
-export function useMeasurementsHistory(forChart: boolean) {
-const { currentUser } = useAuth();
-  const [dataHistory, setDataHistory] = useState<MesauremetType[]>([]);
+export function useWorkoutHistory(forChart: boolean) {
+  const { currentUser } = useAuth();
+  const [dataHistory, setDataHistory] = useState<WorkoutType[]>([]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -26,27 +23,26 @@ const { currentUser } = useAuth();
       return;
     }
 
-    const measurementsRef = collection(
+    const workoutRef = collection(
       db,
       "userData",
       currentUser.uid,
-      "mesaurementsHistory",
+      "workoutHistory",
     );
 
     let q;
     if (forChart) {
-      q = query(measurementsRef, orderBy("dateInput", "asc"));
-    }else{
-     q = query(measurementsRef, orderBy("dateInput", "desc"));
+      q = query(workoutRef, orderBy("date", "asc"));
+    } else {
+      q = query(workoutRef, orderBy("date", "desc"));
     }
-
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const rawData = querySnapshot.docs.map((doc) => {
         return {
           id: doc.id,
           ...doc.data(),
-        } as MesauremetType;
+        } as WorkoutType;
       });
 
       setDataHistory(rawData);
