@@ -143,17 +143,13 @@ export default function Checklist() {
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24">
       <section className="flex justify-center">
         <h1 className=" flex text-2xl font-bold gap-2 items-center">
-          <img
-            src="custom emoji/foodChecklistEmoji.png"
-            className="h-17 w-17"
-          />
           Diario Alimentare
         </h1>
       </section>
       <section>
         <Dialog>
           <DialogTrigger asChild>
-            <Button>
+            <Button className="h-11">
               <CirclePlus />
               Nuovo
             </Button>

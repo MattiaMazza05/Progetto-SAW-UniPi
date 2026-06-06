@@ -13,10 +13,7 @@ import { CirclePlus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import React, { useState } from "react";
-import {
-  addDoc,
-  collection,
-} from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { useAuth } from "@/context/AuthContext";
 import { Spinner } from "../ui/spinner";
@@ -110,9 +107,9 @@ export default function WorkoutsForm() {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button>
-            <CirclePlus />
-            Nuovo
+          <Button className="h-11 justify-center gap-2">
+            <CirclePlus className="h-5 w-5" />
+            <span>Nuovo</span>
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
@@ -171,12 +168,12 @@ export default function WorkoutsForm() {
                   onValueChange={(value) => setType(value)}
                   required
                 >
-                  <SelectTrigger id="workout-type" className="w-full" >
+                  <SelectTrigger id="workout-type" className="w-full">
                     <SelectValue placeholder="Seleziona tipo" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Run">Corsa</SelectItem>
-                    <SelectItem value="Gym">Pesi</SelectItem>
+                    <SelectItem value="Corsa">Corsa</SelectItem>
+                    <SelectItem value="Pesi">Pesi</SelectItem>
                   </SelectContent>
                 </Select>
                 <div>{gymVsRun()}</div>

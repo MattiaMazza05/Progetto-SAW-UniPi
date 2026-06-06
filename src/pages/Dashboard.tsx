@@ -96,10 +96,9 @@ export default function Dashboard() {
 
   const avatarSrc = userData?.photoURL ?? undefined;
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24 min-h-scee">
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24 min-h-screen">
       <section className="flex justify-center">
         <h1 className="text-2xl font-bold gap-2 items-center flex">
-          <img src="custom emoji/profileIcon.png" className="h-17 w-17" />
           Il tuo profilo
         </h1>
       </section>
@@ -109,7 +108,7 @@ export default function Dashboard() {
             <CardTitle>👋 Ciao, {userData?.fullName}</CardTitle>
             <CardDescription>La tua mail è: {userData?.email}</CardDescription>
             <CardAction>
-              <Avatar>
+              <Avatar className="size-14">
                 <AvatarImage
                   src={avatarSrc}
                   alt="Foto profilo"
@@ -125,7 +124,7 @@ export default function Dashboard() {
                 Altezza: {userData?.height}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline">
+                    <Button variant="outline" className="h-11">
                       <Pen />
                     </Button>
                   </PopoverTrigger>
@@ -138,6 +137,7 @@ export default function Dashboard() {
                     </PopoverHeader>
                     <Field>
                       <Input
+                        className="h-11"
                         id="height"
                         type="number"
                         required
@@ -146,7 +146,11 @@ export default function Dashboard() {
                         }}
                       />
                       <div className="flex gap-2">
-                        <Button onClick={heightModifier} type="button">
+                        <Button
+                          onClick={heightModifier}
+                          type="button"
+                          className="h-11"
+                        >
                           Modifica
                         </Button>
                       </div>
@@ -159,7 +163,7 @@ export default function Dashboard() {
                 Sesso: {userData?.gender}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline">
+                    <Button variant="outline" className="h-11">
                       <Pen />
                     </Button>
                   </PopoverTrigger>
@@ -172,11 +176,11 @@ export default function Dashboard() {
                     </PopoverHeader>
                     <Field>
                       <Select
-                        defaultValue= {userData?.gender}
+                        defaultValue={userData?.gender}
                         onValueChange={(value) => setNewGender(value)}
                         required
                       >
-                        <SelectTrigger id="form-sex">
+                        <SelectTrigger id="form-sex" className="h-11 w-full">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -185,7 +189,11 @@ export default function Dashboard() {
                         </SelectContent>
                       </Select>
                       <div className="flex gap-2">
-                        <Button onClick={genderModifier} type="button">
+                        <Button
+                          onClick={genderModifier}
+                          type="button"
+                          className="h-11"
+                        >
                           Modifica
                         </Button>
                       </div>
@@ -199,7 +207,7 @@ export default function Dashboard() {
                 Data di nascita: {userData?.birthdate}
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline">
+                    <Button variant="outline" className="h-11">
                       <Pen />
                     </Button>
                   </PopoverTrigger>
@@ -212,6 +220,7 @@ export default function Dashboard() {
                     </PopoverHeader>
                     <Field>
                       <Input
+                        className="h-11"
                         id="birthday"
                         type="date"
                         required
@@ -220,7 +229,11 @@ export default function Dashboard() {
                         }
                       />
                       <div className="flex gap-2">
-                        <Button onClick={birthDateModifier} type="button">
+                        <Button
+                          onClick={birthDateModifier}
+                          type="button"
+                          className="h-11"
+                        >
                           Modifica
                         </Button>
                       </div>
@@ -234,7 +247,7 @@ export default function Dashboard() {
           <CardFooter className="flex-col gap-2">
             <Button
               onClick={logoutUser}
-              className="w-full"
+              className="w-full h-11"
               variant="destructive"
             >
               Logout

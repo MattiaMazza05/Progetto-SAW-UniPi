@@ -115,6 +115,8 @@
   --chart-5: oklch(0.47 0.157 37.304);
   --chart-weight: oklch(0.546 0.245 262.881);
   --chart-red: oklch(0.577 0.245 27.325);
+    --chart-distance: oklch(66.781% 0.21697 38.333);
+  --chart-volume: oklch(100% 0.00011 271.152);
   --chart-green: oklch(0.527 0.154 150.069);
   --sidebar: oklch(0.216 0.006 56.043);
   --sidebar-foreground: oklch(0.985 0.001 106.423);

@@ -13,6 +13,7 @@ import { useMeasurementsHistory } from "@/hooks/useMesauremetsHistory";
 import { db } from "@/firebase/config";
 import { doc, deleteDoc } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
+import { formatDate } from "@/hooks/commonHooks";
 //creo un interfaccia per i dati
 //ho usato l'AI per aiutarmi nella creazione della tabella dinamica e per la creazione della query
 
@@ -30,13 +31,8 @@ export function MesaurementsTable() {
     );
     await deleteDoc(docRef);
   }
-  function formatDate(date: string) {
-    const [year, month, day] = date.split("-");
-    return `${day}/${month}/${year}`;
-  }
   return (
     <Table>
-      {" "}
       <TableHeader>
         <TableRow>
           <TableHead className="w-3">Elimina</TableHead>

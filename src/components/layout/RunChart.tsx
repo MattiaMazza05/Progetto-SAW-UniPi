@@ -27,7 +27,7 @@ const chartConfig = {
 export function RunChart() {
   const workoutHistory = useWorkoutHistory(true);
   const chartData = workoutHistory
-    .filter((entry) => entry.type === "Run" && entry.distance !== null)
+    .filter((entry) => entry.type === "Corsa" && entry.distance !== null)
     .map((entry) => ({
       date: entry.date,
       distance: entry.distance,

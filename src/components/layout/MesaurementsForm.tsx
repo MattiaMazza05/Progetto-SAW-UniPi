@@ -129,7 +129,7 @@ export default function MesaurementsForm() {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button>
+          <Button className="h-11">
             <CirclePlus />
             Nuovo
           </Button>

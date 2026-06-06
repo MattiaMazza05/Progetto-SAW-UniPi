@@ -27,7 +27,7 @@ const chartConfig = {
 export function GymChart() {
   const workoutHistory = useWorkoutHistory(true);
   const chartData = workoutHistory
-    .filter((entry) => entry.type === "Gym" && entry.volume !== null)
+    .filter((entry) => entry.type === "Pesi" && entry.volume !== null)
     .map((entry) => ({
       date: entry.date,
       volume: entry.volume,
