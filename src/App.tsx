@@ -13,6 +13,7 @@ import { Toaster } from "sonner";
 import UserInformation from "./pages/UserInformation";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
+import CallBack from "./pages/CallBack";
 
 function AppBottomNav() {
   const { currentUser } = useAuth();
@@ -26,14 +27,16 @@ function AppBottomNav() {
 }
 function App() {
   useEffect(() => {
-  const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
 
-  if (prefersDark) {
-    document.documentElement.classList.add("dark");
-  } else {
-    document.documentElement.classList.remove("dark");
-  }
-}, []);
+    if (prefersDark) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, []);
   return (
     <BrowserRouter>
       <Routes>
@@ -49,6 +52,7 @@ function App() {
           <Route path="/measurements" element={<Measurements />} />
           <Route path="/checklist" element={<Checklist />} />
           <Route path="/workouts" element={<Workouts />} />
+          <Route path="/strava/callback" element={<CallBack />} />
         </Route>
       </Routes>
       <AppBottomNav />
