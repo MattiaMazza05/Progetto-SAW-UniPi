@@ -128,11 +128,13 @@ export default function MesaurementsForm() {
   return (
     <>
       <Dialog>
-        <DialogTrigger asChild>
-          <Button className="h-11">
-            <CirclePlus />
-            Nuovo
-          </Button>
+        <DialogTrigger asChild className="">
+          <section className="grid gap-3 sm:grid-cols-3 sm:items-center">
+            <Button className="h-11 ">
+              <CirclePlus />
+              Nuovo
+            </Button>
+          </section>
         </DialogTrigger>
         <DialogContent className="sm:max-w-sm">
           <form

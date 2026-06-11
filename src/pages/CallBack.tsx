@@ -41,6 +41,9 @@ export default function CallBack({}) {
               userRef,
               {
                 stravaAccessToken: data.access_token,
+                stravaRefreshToken: data.refresh_token,
+                stravaExpiresAt: data.expires_at,
+                stravaAthleteId: data.athlete.id,
               },
               { merge: true },
             );
@@ -66,7 +69,7 @@ export default function CallBack({}) {
         </EmptyMedia>
         <EmptyTitle>In collegamento con Strava</EmptyTitle>
         <EmptyDescription>
-          Attendi mentre elaboriamo la tua richiesta. Non aggiornare la pagina.
+          Attendi mentre elaboro la tua richiesta. Non aggiornare la pagina.
         </EmptyDescription>
       </EmptyHeader>
     </Empty>

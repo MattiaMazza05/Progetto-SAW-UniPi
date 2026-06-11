@@ -3,7 +3,6 @@ import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -19,7 +18,7 @@ export const description = "A line chart with dots";
 
 const chartConfig = {
   volume: {
-    label: "Volume Setimanale",
+    label: "Volume kg:",
     color: "var(--chart-volume)",
   },
 } satisfies ChartConfig;
@@ -27,7 +26,7 @@ const chartConfig = {
 export function GymChart() {
   const workoutHistory = useWorkoutHistory(true);
   const chartData = workoutHistory
-    .filter((entry) => entry.type === "Pesi" && entry.volume !== null)
+    .filter((entry) => entry.type === "Pesi")
     .map((entry) => ({
       date: entry.date,
       volume: entry.volume,
@@ -36,7 +35,6 @@ export function GymChart() {
     <Card>
       <CardHeader>
         <CardTitle>Pesi</CardTitle>
-        <CardDescription>Volume complessivo Settimanale</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -47,7 +45,6 @@ export function GymChart() {
               top: 16,
               left: 36,
               right: 36,
-              bottom: 18,
             }}
           >
             <CartesianGrid vertical={false} />

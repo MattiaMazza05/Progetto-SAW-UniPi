@@ -149,10 +149,12 @@ export default function Checklist() {
       <section>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="h-11">
-              <CirclePlus />
-              Nuovo
-            </Button>
+            <section className="grid gap-3 sm:grid-cols-3 sm:items-center">
+              <Button className="h-11">
+                <CirclePlus />
+                Nuovo
+              </Button>
+            </section>
           </DialogTrigger>
           <DialogContent className="sm:max-w-sm">
             <form onSubmit={handleSubmit} className="grid gap-6">

@@ -76,7 +76,7 @@ export function BodyMassChart() {
               stroke="var(--color-fatMass)"
               strokeWidth={2}
               dot={{
-                fill: "var(--background)",
+                fill: "var(--color-fatMass)",
               }}
               activeDot={{
                 r: 6,
@@ -90,7 +90,7 @@ export function BodyMassChart() {
               stroke="var(--color-leanMass)"
               strokeWidth={2}
               dot={{
-                fill: "var(--background)",
+                fill: "var(--color-leanMass)",
               }}
               activeDot={{
                 r: 6,

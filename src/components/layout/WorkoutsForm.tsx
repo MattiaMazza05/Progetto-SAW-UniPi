@@ -67,7 +67,7 @@ export default function WorkoutsForm() {
   }
 
   function gymVsRun() {
-    if (type == "Gym") {
+    if (type == "Pesi") {
       return (
         <div className="grid gap-2">
           <div className="flex items-center">
@@ -83,7 +83,7 @@ export default function WorkoutsForm() {
           />
         </div>
       );
-    } else if (type == "Run") {
+    } else if (type == "Corsa") {
       return (
         <div className="grid gap-2">
           <div className="flex items-center">
@@ -107,7 +107,7 @@ export default function WorkoutsForm() {
     <>
       <Dialog>
         <DialogTrigger asChild>
-          <Button className="h-11 justify-center gap-2">
+          <Button className="h-11 w-full justify-center gap-2">
             <CirclePlus className="h-5 w-5" />
             <span>Nuovo</span>
           </Button>

@@ -3,6 +3,7 @@ import { RunChart } from "@/components/layout/RunChart";
 import { GymChart } from "@/components/layout/GymChart";
 import { WorkoutTable } from "@/components/layout/WorkoutTable";
 import { Button } from "@/components/ui/button";
+import { StravaSyncButton } from "@/components/layout/StravaSyncButton";
 export default function Workouts() {
   function HandleStravaConnection() {
     const clientId = import.meta.env.VITE_STRAVA_CLIENT_ID;
@@ -25,17 +26,20 @@ export default function Workouts() {
           Diario Allenamenti
         </h1>
       </section>
-      <section className="flex items-center justify-between gap-4">
+      <section className="grid gap-3 sm:grid-cols-3 sm:items-center">
         <WorkoutsForm />
+
+        <StravaSyncButton />
+
         <Button
           type="button"
-          className="h-11 overflow-hidden p-0"
+          className="h-11 w-full overflow-hidden p-0 bg-[#FC5200] hover:bg-[#FC5200]"
           onClick={HandleStravaConnection}
         >
           <img
             src="/icons/btn_strava_connect_with_orange_x2.svg"
             alt="Collega con Strava"
-            className="block h-full w-full"
+            className="block h-full w-auto"
           />
         </Button>
       </section>

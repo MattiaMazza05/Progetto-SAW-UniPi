@@ -68,7 +68,7 @@ export function WeightChart() {
               stroke="var(--color-weight)"
               strokeWidth={2}
               dot={{
-                fill: "var(--background)",
+                fill: "var(--color-weight)",
               }}
               activeDot={{
                 r: 6,

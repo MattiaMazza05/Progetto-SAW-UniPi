@@ -1,11 +1,11 @@
 import { useAuth } from "@/context/AuthContext";
 import { db } from "@/firebase/config";
 import { useWorkoutHistory } from "@/hooks/useWorkoutHistory";
-import { deleteDoc, doc, getDoc } from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { toast } from "sonner";
 import { Trash2, SportShoe, Dumbbell } from "lucide-react";
 import { formatDate } from "@/hooks/commonHooks";
-
+import { normalizedWorkoutType } from "@/hooks/commonHooks";
 import {
   Table,
   TableBody,
@@ -15,12 +15,35 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Pen } from "lucide-react";
 
 export function WorkoutTable() {
   const workoutHistory = useWorkoutHistory(false);
   const { currentUser } = useAuth();
-  const [stravaAccessToken, setStravaAccessToken] = useState("");
+  const [addVolume, setAddVolume] = useState(0);
+
+  async function addSessionVolume(id: string) {
+    if (!currentUser) return;
+    const docRef = doc(db, "userData", currentUser.uid, "workoutHistory", id);
+
+    await updateDoc(docRef, {
+      volume: addVolume,
+    });
+    toast.success("Volume aggiunto.", {
+      position: "top-center",
+    });
+  }
 
   async function deleteWorkout(id: string) {
     if (!currentUser) return;
@@ -29,7 +52,16 @@ export function WorkoutTable() {
   }
 
   function formatDuration(duration: number) {
-    return duration / 60;
+    const hours = Math.floor(duration / 60);
+    const minutes = duration % 60;
+    if (hours == 0) {
+      return `${minutes} min`;
+    }
+    if (minutes === 0) {
+      return `${hours} h`;
+    }
+
+    return `${hours}h ${minutes} min`;
   }
 
   function customIcon(type: string) {
@@ -40,76 +72,47 @@ export function WorkoutTable() {
       return <Dumbbell className="h-4 w-4" />;
     }
   }
-  useEffect(() => {
-    async function getStravaAccesToken() {
-      if (!currentUser) return;
-      const userRef = doc(db, "userData", currentUser.uid);
-      const userSnap = await getDoc(userRef);
 
-      if (userSnap.exists()) {
-        const userData = userSnap.data();
-        if (userData.stravaAccessToken) {
-          setStravaAccessToken(userData.stravaAccessToken);
-        }
-      }
-    }
-    getStravaAccesToken();
-  }, [currentUser]);
-
-  type StravaActivity = {
-    id: number;
-    start_date: string;
-    name: string;
-    sport_type: string;
-    moving_time: number;
-    distance: number;
-    device_name: string;
-  };
-
-  useEffect(() => {
-    if (!stravaAccessToken) return;
-    const now = Math.floor(Date.now() / 1000);
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-    const after = Math.floor(oneMonthAgo.getTime() / 1000);
-
-    const url = `https://www.strava.com/api/v3/athlete/activities?before=${now}&after=${after}&page=1&per_page=60`;
-    fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${stravaAccessToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Attività Strava:", data);
-        const formattedActivity = data.map((entry: StravaActivity) => {
-          return {
-            stravaId: entry.id,
-            date: entry.start_date.split("T")[0],
-            title: entry.name,
-            type: normalizedWorkoutType(entry.sport_type),
-            duration: Math.round(entry.moving_time / 60),
-            distance: entry.distance
-              ? Number((entry.distance / 1000).toFixed(2))
-              : null,
-            volume: null,
-            source: entry.device_name,
-          };
-        });
-
-        console.log("Attività formattate: ", formattedActivity);
-      });
-  }, [stravaAccessToken]);
-
-  function normalizedWorkoutType(type: string) {
-    if (type == "Corsa" || type == "Run") {
-      return "Corsa";
-    }
-    if (type == "Pesi" || type == "WeightTraining") {
-      return "Pesi";
-    }
-    return type;
+  function showVolumeModifierButton(id: string) {
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button variant="outline" className="h-11">
+            <Pen />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverHeader>
+            <PopoverTitle>Inserici volume totale</PopoverTitle>
+            <PopoverDescription>
+              Inserisci i kg totali che hai sollevato.
+            </PopoverDescription>
+          </PopoverHeader>
+          <Field>
+            <Input
+              className="h-11"
+              id="height"
+              type="number"
+              required
+              onChange={(event) => {
+                setAddVolume(Number(event.target.value));
+              }}
+            />
+            <div className="flex gap-2">
+              <Button
+                onClick={() => {
+                  addSessionVolume(id);
+                }}
+                type="button"
+                className="h-11"
+              >
+                Modifica
+              </Button>
+            </div>
+          </Field>
+        </PopoverContent>
+      </Popover>
+    );
   }
 
   return (
@@ -142,18 +145,25 @@ export function WorkoutTable() {
               </Button>
             </TableCell>
             <TableCell className="font-medium">
-              Settimana: {formatDate(entry.date)}
+              {formatDate(entry.date)}
             </TableCell>
             <TableCell>{entry.title}</TableCell>
             <TableCell className="flex items-center gap-2">
               {customIcon(normalizedWorkoutType(entry.type))}
               <span>{normalizedWorkoutType(entry.type)}</span>
             </TableCell>
-            <TableCell>{formatDuration(entry.duration)} h</TableCell>
+            <TableCell>{formatDuration(entry.duration)}</TableCell>
             <TableCell>
-              {normalizedWorkoutType(entry.type) == "Corsa"
-                ? `${entry.distance ?? 0} km`
-                : `${entry.volume ?? 0} kg`}
+              {normalizedWorkoutType(entry.type) == "Corsa" ? (
+                `${entry.distance ?? 0} km`
+              ) : entry.volume == null ? (
+                <div className="flex items-center gap-2">
+                  <span>0 kg</span>
+                  {showVolumeModifierButton(entry.id)}
+                </div>
+              ) : (
+                `${entry.volume} kg`
+              )}
             </TableCell>
           </TableRow>
         ))}

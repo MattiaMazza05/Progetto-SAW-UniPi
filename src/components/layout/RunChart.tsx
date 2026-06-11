@@ -3,7 +3,6 @@ import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -19,7 +18,7 @@ export const description = "A line chart with dots";
 
 const chartConfig = {
   distance: {
-    label: "Distanza",
+    label: "Distanza km:",
     color: "var(--chart-distance)",
   },
 } satisfies ChartConfig;
@@ -36,7 +35,6 @@ export function RunChart() {
     <Card>
       <CardHeader>
         <CardTitle>Corsa</CardTitle>
-        <CardDescription>Chilometri settimanali corsi</CardDescription>
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig}>
@@ -70,7 +68,7 @@ export function RunChart() {
               stroke="var(--color-distance)"
               strokeWidth={2}
               dot={{
-                fill: "var(--color-background)",
+                fill: "var(--color-distance)",
               }}
               activeDot={{
                 r: 6,
