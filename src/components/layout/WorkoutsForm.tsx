@@ -179,6 +179,7 @@ export default function WorkoutsForm() {
                 <div>{gymVsRun()}</div>
               </div>
             </div>
+            {error && <p className="text-sm text-destructive">{error}</p>}
             <DialogFooter>
               <DialogClose asChild>
                 <Button variant="outline">Chiudi</Button>
