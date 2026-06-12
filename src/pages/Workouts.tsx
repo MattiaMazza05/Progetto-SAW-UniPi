@@ -8,7 +8,7 @@ export default function Workouts() {
   function HandleStravaConnection() {
     const clientId = import.meta.env.VITE_STRAVA_CLIENT_ID;
 
-    const redirectUri = "http://localhost:5173/strava/callback";
+    const redirectUri = `${window.location.origin}/strava/callback`;
 
     const params = new URLSearchParams({
       client_id: clientId,

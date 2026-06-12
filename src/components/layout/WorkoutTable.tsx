@@ -77,7 +77,7 @@ export function WorkoutTable() {
     return (
       <Popover>
         <PopoverTrigger asChild>
-          <Button variant="outline" className="h-11">
+          <Button variant="outline" className="h-11 w-11">
             <Pen />
           </Button>
         </PopoverTrigger>
@@ -90,7 +90,7 @@ export function WorkoutTable() {
           </PopoverHeader>
           <Field>
             <Input
-              className="h-11"
+              className="h-11 w-11"
               id="height"
               type="number"
               required

@@ -134,6 +134,33 @@ export default function Checklist() {
     await saveHabits(newHabitsArray);
   }
 
+  async function deleteHabit(id: string) {
+    const newHabitsArray = userHabits.filter((habit) => habit.id !== id);
+
+    setUserHabits(newHabitsArray);
+    await saveHabits(newHabitsArray);
+  }
+
+  async function updateHabit(id: string, newDescription: string) {
+    if (newDescription.trim() === "") {
+      return;
+    }
+
+    const newHabitsArray = userHabits.map((habit) => {
+      if (habit.id !== id) {
+        return habit;
+      }
+
+      return {
+        ...habit,
+        description: newDescription.trim(),
+      };
+    });
+
+    setUserHabits(newHabitsArray);
+    await saveHabits(newHabitsArray);
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     await addHabits(habitDescription);
@@ -143,7 +170,7 @@ export default function Checklist() {
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24">
       <section className="flex justify-center">
         <h1 className=" flex text-2xl font-bold gap-2 items-center">
-          Diario Alimentare
+          Habit tracker
         </h1>
       </section>
       <section>
@@ -197,6 +224,8 @@ export default function Checklist() {
           habits={userHabits}
           today={today}
           onToggleHabit={toggleHabit}
+          onDeleteHabit={deleteHabit}
+          onUpdateHabit={updateHabit}
         />
       </section>
     </main>

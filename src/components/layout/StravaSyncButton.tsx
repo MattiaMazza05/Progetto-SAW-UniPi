@@ -21,6 +21,7 @@ export function StravaSyncButton() {
   const { currentUser } = useAuth();
   const [isSyncing, setIsSyncing] = useState(false);
 
+
   async function syncStravaActivity() {
     if (!currentUser) return;
 

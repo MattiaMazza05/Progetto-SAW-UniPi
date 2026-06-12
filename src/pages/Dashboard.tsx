@@ -11,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { logoutUser } from "@/firebase/auth";
-import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -34,6 +33,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Field } from "@/components/ui/field";
+import { sendNotification } from "@/hooks/commonHooks";
+import { BellRing, Cake, VenusAndMars, Ruler } from "lucide-react";
 
 export default function Dashboard() {
   type UserData = {
@@ -43,6 +46,7 @@ export default function Dashboard() {
     height: number;
     email: string;
     photoURL: string | null;
+    notificationsEnabled?: boolean;
   };
 
   const { currentUser } = useAuth();
@@ -50,12 +54,17 @@ export default function Dashboard() {
   const [newHeight, setNewHeight] = useState(0);
   const [newGender, setNewGender] = useState("");
   const [newBirthDate, setNewBirthDate] = useState("");
+  const [enableNotification, setEnableNotification] = useState(false);
+  const avatarSrc = userData?.photoURL ?? undefined;
+
   useEffect(() => {
     if (!currentUser) return;
     const docRef = doc(db, "userData", currentUser.uid);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
-        setUserData(docSnap.data() as UserData);
+        const data = docSnap.data() as UserData;
+        setUserData(data);
+        setEnableNotification(data.notificationsEnabled ?? false);
       }
     });
 
@@ -94,7 +103,43 @@ export default function Dashboard() {
     });
   }
 
-  const avatarSrc = userData?.photoURL ?? undefined;
+  async function handleNotificationChange(checked: boolean) {
+    if (!currentUser) return;
+    if (checked) {
+      if (!("Notification" in window)) {
+        toast.error("Il browser non supporta le notifiche.");
+        return;
+      }
+
+      const permission = await Notification.requestPermission();
+
+      if (permission !== "granted") {
+        setEnableNotification(false);
+        toast.error("permesso notifiche negato.");
+        return;
+      }
+
+      const userRef = doc(db, "userData", currentUser.uid);
+
+      await updateDoc(userRef, {
+        notificationsEnabled: true,
+      });
+
+      setEnableNotification(true);
+      toast.success("Notifiche abilitate.");
+      sendNotification("Notifica da:", "Le notifiche appariranno così.");
+      return;
+    }
+    const userRef = doc(db, "userData", currentUser.uid);
+
+    await updateDoc(userRef, {
+      notificationsEnabled: false,
+    });
+
+    setEnableNotification(false);
+    toast.success("Notifiche disattivate.");
+  }
+
   return (
     <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 p-4 pb-24 min-h-screen">
       <section className="flex justify-center">
@@ -121,10 +166,13 @@ export default function Dashboard() {
           <CardContent>
             <ul className="space-y-3">
               <li className="flex items-center justify-between">
-                Altezza: {userData?.height}
+                <span className="flex items-center gap-2">
+                  <Ruler className="h-4 w-4" />
+                  Altezza: {userData?.height}
+                </span>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="h-11">
+                    <Button variant="outline" className="h-11 w-11">
                       <Pen />
                     </Button>
                   </PopoverTrigger>
@@ -160,10 +208,13 @@ export default function Dashboard() {
               </li>
               <Separator />
               <li className="flex items-center justify-between">
-                Sesso: {userData?.gender}
+                <span className="flex items-center gap-2">
+                  <VenusAndMars className="h-4 w-4" />
+                  Sesso: {userData?.gender}
+                </span>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="h-11">
+                    <Button variant="outline" className="h-11 w-11">
                       <Pen />
                     </Button>
                   </PopoverTrigger>
@@ -204,10 +255,13 @@ export default function Dashboard() {
               <Separator />
 
               <li className="flex items-center justify-between">
-                Data di nascita: {userData?.birthdate}
+                <span className="flex items-center gap-2">
+                  <Cake className="h-4 w-4" />
+                  Data di nascita: {userData?.birthdate}
+                </span>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <Button variant="outline" className="h-11">
+                    <Button variant="outline" className="h-11 w-11">
                       <Pen />
                     </Button>
                   </PopoverTrigger>
@@ -241,8 +295,22 @@ export default function Dashboard() {
                   </PopoverContent>
                 </Popover>
               </li>
+              <Separator />
+              <li className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <BellRing className="h-4 w-4" />
+                  Abilita notifiche
+                </span>
+
+                <Switch
+                  id="switch-notification"
+                  checked={enableNotification}
+                  onCheckedChange={handleNotificationChange}
+                />
+              </li>
             </ul>
           </CardContent>
+
           <Separator />
           <CardFooter className="flex-col gap-2">
             <Button

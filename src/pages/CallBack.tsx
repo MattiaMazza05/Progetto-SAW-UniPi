@@ -11,7 +11,7 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { Spinner } from "@/components/ui/spinner";
-import { toast } from "sonner";
+import { sendNotification } from "@/hooks/commonHooks";
 
 export default function CallBack({}) {
   const { currentUser } = useAuth();
@@ -47,9 +47,7 @@ export default function CallBack({}) {
               },
               { merge: true },
             );
-            toast.success("Collegamento con Strava effetuato", {
-              position: "top-center",
-            });
+            sendNotification("Notifica da:", "Strava Collegato con successo.")
             navigate("/workouts");
           } else {
             console.error("Risposta di Strava: ", data);
