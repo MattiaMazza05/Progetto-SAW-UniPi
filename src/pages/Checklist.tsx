@@ -218,7 +218,8 @@ export default function Checklist() {
           </DialogContent>
         </Dialog>
       </section>
-
+      <section>        
+      </section>
       <section>
         <CheckListTable
           habits={userHabits}

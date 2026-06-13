@@ -14,6 +14,7 @@ import UserInformation from "./pages/UserInformation";
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import CallBack from "./pages/CallBack";
+import { NotificationManager } from "./components/layout/NotificationManager";
 
 function AppBottomNav() {
   const { currentUser } = useAuth();
@@ -39,9 +40,10 @@ function App() {
   }, []);
   return (
     <BrowserRouter>
+      <NotificationManager />
       <Routes>
         <Route element={<PublicRoute />}>
-          <Route path="/" element={<LoginPage />} />
+          <Route path="/" element={<SignupPage />} />
           <Route path="/login" element={<LoginPage />} />
         </Route>
         <Route path="/register" element={<SignupPage />} />

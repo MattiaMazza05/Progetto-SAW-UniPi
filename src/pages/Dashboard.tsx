@@ -36,7 +36,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Field } from "@/components/ui/field";
 import { sendNotification } from "@/hooks/commonHooks";
-import { BellRing, Cake, VenusAndMars, Ruler } from "lucide-react";
+import { BellRing, Cake, VenusAndMars, Ruler,AlarmClock } from "lucide-react";
 
 export default function Dashboard() {
   type UserData = {
@@ -46,6 +46,7 @@ export default function Dashboard() {
     height: number;
     email: string;
     photoURL: string | null;
+    notificationTime: string;
     notificationsEnabled?: boolean;
   };
 
@@ -55,7 +56,10 @@ export default function Dashboard() {
   const [newGender, setNewGender] = useState("");
   const [newBirthDate, setNewBirthDate] = useState("");
   const [enableNotification, setEnableNotification] = useState(false);
+  const [newNotificationTime, setNewNotificationTime] = useState("");
   const avatarSrc = userData?.photoURL ?? undefined;
+
+  type UserPreferenceValue = string | number | boolean;
 
   useEffect(() => {
     if (!currentUser) return;
@@ -71,34 +75,16 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [currentUser]);
 
-  async function heightModifier() {
+  async function userPreferenceModifier(
+    setting: string,
+    value: UserPreferenceValue,
+  ) {
     if (!currentUser) return;
     const docRef = doc(db, "userData", currentUser.uid);
     await updateDoc(docRef, {
-      height: newHeight,
+      [setting]: value,
     });
-    toast.success("Altezza modificata.", {
-      position: "top-center",
-    });
-  }
-
-  async function genderModifier() {
-    if (!currentUser) return;
-    const docRef = doc(db, "userData", currentUser.uid);
-    await updateDoc(docRef, {
-      gender: newGender,
-    });
-    toast.success("Sesso modificato.", {
-      position: "top-center",
-    });
-  }
-  async function birthDateModifier() {
-    if (!currentUser) return;
-    const docRef = doc(db, "userData", currentUser.uid);
-    await updateDoc(docRef, {
-      birthdate: newBirthDate,
-    });
-    toast.success("Data di Nascita modificata.", {
+    toast.success("Campo modificato", {
       position: "top-center",
     });
   }
@@ -195,7 +181,9 @@ export default function Dashboard() {
                       />
                       <div className="flex gap-2">
                         <Button
-                          onClick={heightModifier}
+                          onClick={() => {
+                            userPreferenceModifier("height", newHeight);
+                          }}
                           type="button"
                           className="h-11"
                         >
@@ -241,7 +229,9 @@ export default function Dashboard() {
                       </Select>
                       <div className="flex gap-2">
                         <Button
-                          onClick={genderModifier}
+                          onClick={() => {
+                            userPreferenceModifier("gender", newGender);
+                          }}
                           type="button"
                           className="h-11"
                         >
@@ -253,7 +243,6 @@ export default function Dashboard() {
                 </Popover>
               </li>
               <Separator />
-
               <li className="flex items-center justify-between">
                 <span className="flex items-center gap-2">
                   <Cake className="h-4 w-4" />
@@ -284,7 +273,58 @@ export default function Dashboard() {
                       />
                       <div className="flex gap-2">
                         <Button
-                          onClick={birthDateModifier}
+                          onClick={() => {
+                            userPreferenceModifier("birthdate", newBirthDate);
+                          }}
+                          type="button"
+                          className="h-11"
+                        >
+                          Modifica
+                        </Button>
+                      </div>
+                    </Field>
+                  </PopoverContent>
+                </Popover>
+              </li>
+              <Separator />
+              <li className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <AlarmClock className="h-4 w-4" />
+                  Orario promemoria: {userData?.notificationTime}
+                </span>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className="h-11 w-11">
+                      <Pen />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <PopoverHeader>
+                      <PopoverTitle>
+                        Modifica l'ora a cui vuoi ricevere il promemoria
+                      </PopoverTitle>
+                      <PopoverDescription>
+                        Inserisci nuovo orario .
+                      </PopoverDescription>
+                    </PopoverHeader>
+                    <Field>
+                      <Input
+                        className="h-11"
+                        id="newNotificationTime"
+                        type="time"
+                        required
+                        onChange={(event) =>
+                          setNewNotificationTime(event.target.value)
+                        }
+                      />
+                      <div className="flex gap-2">
+                        <Button
+                          onClick={() => {
+                            userPreferenceModifier(
+                              "notificationTime",
+                              newNotificationTime,
+                            );
+                          }}
                           type="button"
                           className="h-11"
                         >

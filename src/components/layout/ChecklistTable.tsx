@@ -45,8 +45,8 @@ export function CheckListTable({
           <TableHead className="w-8">Fatto</TableHead>
           <TableHead>Nome</TableHead>
           <TableHead>Streak</TableHead>
-          <TableHead>Elimina</TableHead>
-          <TableHead>Modifica</TableHead>
+          <TableHead className="w-8">Elimina</TableHead>
+          <TableHead className="w-8">Modifica</TableHead>
         </TableRow>
       </TableHeader>
 

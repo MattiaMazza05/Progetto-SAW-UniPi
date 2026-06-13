@@ -33,6 +33,7 @@ export function UserInfoForm({ className, ...props }: React.ComponentProps<"div"
   const [gender, setGender] = useState("Uomo");
   const [height, setHeight] = useState(0);
   const [fullName, setFullName] = useState("");
+  const [notificationTime, setNotificationTime] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -53,6 +54,7 @@ export function UserInfoForm({ className, ...props }: React.ComponentProps<"div"
           height: height,
           email: currentUser.email,
           photoURL: currentUser.photoURL,
+          notificationTime: notificationTime,
         },
         { merge: true },
       );
@@ -115,7 +117,6 @@ export function UserInfoForm({ className, ...props }: React.ComponentProps<"div"
                       onChange={(event) =>
                         setHeight(Number(event.target.value))
                       }
-                      value={height}
                     />
                   </Field>
                   <FieldDescription>
@@ -144,9 +145,25 @@ export function UserInfoForm({ className, ...props }: React.ComponentProps<"div"
                 </FieldDescription>
               </Field>
               <Field>
+                <FieldLabel htmlFor="form-name">A che ora vuoi essere inviato/a un promemoria? </FieldLabel>
+                <Input
+                  id="notificationTime"
+                  type="time"
+                  required
+                  onChange={(event) => {
+                    setNotificationTime(event.target.value);
+                  }}
+                  value={notificationTime}
+                />
+                <FieldDescription>
+                  Le notifiche arriveranno solo se hai apperto l'app.
+                </FieldDescription>
+              </Field>
+              <Field>
                 {error && <p className="text-sm text-red-600">{error}</p>}
                 <Button type="submit">Salva Profilo</Button>
               </Field>
+              
             </FieldGroup>
           </form>
         </CardContent>

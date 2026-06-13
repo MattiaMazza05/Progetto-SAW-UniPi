@@ -7,6 +7,7 @@ import { normalizedWorkoutType } from "@/hooks/commonHooks";
 import { Button } from "../ui/button";
 import { RefreshCcw } from "lucide-react";
 import { Spinner } from "../ui/spinner";
+import { getValidStravaToken } from "@/hooks/stravaService";
 type StravaActivity = {
   id: number;
   start_date: string;
@@ -20,7 +21,6 @@ type StravaActivity = {
 export function StravaSyncButton() {
   const { currentUser } = useAuth();
   const [isSyncing, setIsSyncing] = useState(false);
-
 
   async function syncStravaActivity() {
     if (!currentUser) return;
@@ -37,7 +37,7 @@ export function StravaSyncButton() {
       }
 
       const userData = userSnap.data();
-      const stravaAccessToken = userData.stravaAccessToken;
+      const stravaAccessToken = await getValidStravaToken(currentUser.uid, userData);
 
       if (!stravaAccessToken) {
         toast.error("Strava non collegato.");
@@ -70,6 +70,7 @@ export function StravaSyncButton() {
           source: entry.device_name,
         };
       });
+      let activityImportedCunter = 0;
       for (const activity of formattedActivity) {
         const workoutRef = doc(
           db,
@@ -78,9 +79,14 @@ export function StravaSyncButton() {
           "workoutHistory",
           String(activity.stravaId),
         );
-        await setDoc(workoutRef, activity, { merge: true });
+        const existingWorkout = await getDoc(workoutRef);
+        if(existingWorkout.exists()){
+          continue;
+        }
+        await setDoc(workoutRef, activity);
+        activityImportedCunter++;
       }
-      toast.success("Sincronizzazione Strava completata", {
+      toast.success(`Sincronizzazione Strava completata: ${activityImportedCunter} allenamenti importati.` , {
         position: "top-center",
       });
     } catch (error) {
