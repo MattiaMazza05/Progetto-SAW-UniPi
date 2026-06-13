@@ -17,17 +17,11 @@ import { useAuth } from "@/context/AuthContext";
 import { db } from "@/firebase/config";
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { CheckListTable } from "@/components/layout/ChecklistTable";
-
-export interface Habits {
-  id: string;
-  description: string;
-  lastCompletedDate: string | null;
-  streak: number;
-}
+import type { Habit } from "@/types/habit";
 
 export default function Checklist() {
   const { currentUser } = useAuth();
-  const [userHabits, setUserHabits] = useState<Habits[]>([]);
+  const [userHabits, setUserHabits] = useState<Habit[]>([]);
   const [habitDescription, setHabitDescription] = useState("");
   const [error, setError] = useState("");
 
@@ -56,7 +50,7 @@ export default function Checklist() {
     return () => unsubscribe();
   }, [currentUser]);
 
-  async function saveHabits(arrayHabits: Habits[]) {
+  async function saveHabits(arrayHabits: Habit[]) {
     if (!currentUser) return;
 
     const userDocRef = doc(db, "userData", currentUser.uid);
@@ -85,7 +79,7 @@ export default function Checklist() {
       return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
     }
 
-    const newHabit: Habits = {
+    const newHabit: Habit = {
       id: createId(),
       description: description.trim(),
       lastCompletedDate: null,
@@ -101,7 +95,7 @@ export default function Checklist() {
     await saveHabits(newHabitsArray);
   }
 
-  async function toggleHabit(clickedHabit: Habits) {
+  async function toggleHabit(clickedHabit: Habit) {
     const newHabitsArray = userHabits.map((habit) => {
       if (habit.id !== clickedHabit.id) {
         return habit;
@@ -218,8 +212,7 @@ export default function Checklist() {
           </DialogContent>
         </Dialog>
       </section>
-      <section>        
-      </section>
+      <section></section>
       <section>
         <CheckListTable
           habits={userHabits}

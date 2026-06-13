@@ -37,18 +37,8 @@ import { Switch } from "@/components/ui/switch";
 import { Field } from "@/components/ui/field";
 import { sendNotification } from "@/hooks/commonHooks";
 import { BellRing, Cake, VenusAndMars, Ruler,AlarmClock } from "lucide-react";
-
+import type { UserData } from "@/types/user";
 export default function Dashboard() {
-  type UserData = {
-    fullName: string;
-    gender: string;
-    birthdate: string;
-    height: number;
-    email: string;
-    photoURL: string | null;
-    notificationTime: string;
-    notificationsEnabled?: boolean;
-  };
 
   const { currentUser } = useAuth();
   const [userData, setUserData] = useState<UserData | null>(null);

@@ -8,7 +8,7 @@ import SignupPage from "./pages/Register";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
 import { useAuth } from "../src/context/AuthContext";
-import BottomNav from "./components/layout/BottonNav";
+import BottomNav from "./components/layout/BottomNav";
 import { Toaster } from "sonner";
 import UserInformation from "./pages/UserInformation";
 import { useLocation } from "react-router-dom";

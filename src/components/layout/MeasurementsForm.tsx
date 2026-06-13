@@ -19,7 +19,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Spinner } from "../ui/spinner";
 import { toast } from "sonner";
 
-export default function MesaurementsForm() {
+export default function MeasurementsForm()  {
   const [weight, setWeight] = useState(0);
   const [neck, setNeck] = useState(0);
   const [waist, setWaist] = useState(0);
@@ -42,14 +42,6 @@ export default function MesaurementsForm() {
 
         const height = Number(userData.height);
         const gender = String(userData.gender);
-        console.log({
-          height,
-          gender,
-          weight,
-          neck,
-          waist,
-          hips,
-        });
         if (!Number.isFinite(height) || height <= 0) {
           toast.error("Altezza non valida", {
             description: "Controlla il valore dell'altezza nel profilo.",
@@ -63,15 +55,6 @@ export default function MesaurementsForm() {
         const nInch = neck / 2.54;
         const hipsInch = hips / 2.54;
         let bf = 0;
-        console.log("Dati formula:", {
-          height: userData.height,
-          heightNumber: Number(userData.height),
-          sex: userData.sex,
-          weight,
-          neck,
-          waist,
-          hips,
-        });
         if (gender == "Uomo") {
           bf =
             86.01 * Math.log10(wInch - nInch) -
@@ -92,25 +75,24 @@ export default function MesaurementsForm() {
           });
           return;
         }
-        await saveMesaurements(bf, fatMass, leanMass);
+        await saveMeasurements(bf, fatMass, leanMass);
         toast.success("Misurazione salvata.", {
           position: "top-center",
         });
       }
     } catch (error) {
-      console.error("Errore nel calcolo", error);
     } finally {
       setIsCalculating(false);
     }
   }
-  async function saveMesaurements(
+  async function saveMeasurements(
     bfValue: number,
     fmValue: number,
     lmValue: number,
   ) {
     if (!currentUser) return;
     await addDoc(
-      collection(db, "userData", currentUser.uid, "mesaurementsHistory"),
+      collection(db, "userData", currentUser.uid, "measurementsHistory"),
       {
         //salvo lo storico in una subcollection legata all'user uid
         weight: weight,

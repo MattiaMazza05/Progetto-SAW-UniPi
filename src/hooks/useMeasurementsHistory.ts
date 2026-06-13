@@ -2,23 +2,11 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { useAuth } from "@/context/AuthContext";
-
-export interface MesauremetType {
-  id: string;
-  dateInput: string;
-  weight: number;
-  neck: number;
-  waist: number;
-  hips: number;
-  bfP: number;
-  fatMass: number;
-  leanMass: number;
-}
-
+import type { Measurement } from "@/types/measurement";
 
 export function useMeasurementsHistory(forChart: boolean) {
 const { currentUser } = useAuth();
-  const [dataHistory, setDataHistory] = useState<MesauremetType[]>([]);
+  const [dataHistory, setDataHistory] = useState<Measurement[]>([]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -30,7 +18,7 @@ const { currentUser } = useAuth();
       db,
       "userData",
       currentUser.uid,
-      "mesaurementsHistory",
+      "measurementsHistory",
     );
 
     let q;
@@ -46,7 +34,7 @@ const { currentUser } = useAuth();
         return {
           id: doc.id,
           ...doc.data(),
-        } as MesauremetType;
+        } as Measurement;
       });
 
       setDataHistory(rawData);

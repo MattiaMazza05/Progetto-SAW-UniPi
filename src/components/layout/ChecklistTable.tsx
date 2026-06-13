@@ -1,4 +1,4 @@
-import type { Habits } from "@/pages/Checklist";
+import type { Habit } from "@/types/habit";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   Table,
@@ -23,9 +23,9 @@ import { useState } from "react";
 
 
 type CheckListTableProps = {
-  habits: Habits[];
+  habits: Habit[];
   today: string;
-  onToggleHabit: (habit: Habits) => void;
+  onToggleHabit: (habit: Habit) => void;
   onDeleteHabit: (id: string) => void;
   onUpdateHabit: (id: string, newDescription: string) => void;
 };

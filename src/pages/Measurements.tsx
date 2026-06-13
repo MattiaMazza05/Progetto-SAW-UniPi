@@ -1,5 +1,5 @@
-import MesaurementsForm from "../components/layout/MesaurementsForm";
-import { MesaurementsTable } from "../components/layout/MesaurementsTable";
+import MeasurementsForm from "../components/layout/MeasurementsForm";
+import { MeasurementsTable } from "../components/layout/MeasurementsTable";
 import { WeightChart } from "@/components/layout/WeightChart";
 import { BodyMassChart } from "@/components/layout/BodyMassChart";
 export default function Measurements() {
@@ -11,14 +11,14 @@ export default function Measurements() {
         </h1>
       </section>
       <section>
-        <MesaurementsForm />
+        <MeasurementsForm />
       </section>
       <section className="grid gap-4 md:grid-cols-2">
         <WeightChart />
         <BodyMassChart />
       </section>
       <section>
-        <MesaurementsTable />
+        <MeasurementsTable />
       </section>
     </main>
   );

@@ -1,18 +1,13 @@
 import { CartesianGrid, Line, LineChart, XAxis } from "recharts";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart";
-import { useMeasurementsHistory } from "@/hooks/useMesauremetsHistory";
+import { useMeasurementsHistory } from "@/hooks/useMeasurementsHistory";
 
 export const description = "A line chart with a label";
 

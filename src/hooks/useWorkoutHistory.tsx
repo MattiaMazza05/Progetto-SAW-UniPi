@@ -2,20 +2,11 @@ import { useEffect, useState } from "react";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/firebase/config";
 import { useAuth } from "@/context/AuthContext";
-
-export interface WorkoutType {
-  id: string;
-  date: string;
-  distance: number | null;
-  duration: number;
-  title: string;
-  type: string;
-  volume: number | null;
-}
+import type { Workout } from "@/types/workout";
 
 export function useWorkoutHistory(forChart: boolean) {
   const { currentUser } = useAuth();
-  const [dataHistory, setDataHistory] = useState<WorkoutType[]>([]);
+  const [dataHistory, setDataHistory] = useState<Workout[]>([]);
 
   useEffect(() => {
     if (!currentUser) {
@@ -42,7 +33,7 @@ export function useWorkoutHistory(forChart: boolean) {
         return {
           id: doc.id,
           ...doc.data(),
-        } as WorkoutType;
+        } as Workout;
       });
 
       setDataHistory(rawData);

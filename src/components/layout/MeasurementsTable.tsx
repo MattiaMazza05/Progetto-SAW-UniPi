@@ -9,7 +9,7 @@ import {
 import { Button } from "../ui/button";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { useMeasurementsHistory } from "@/hooks/useMesauremetsHistory";
+import { useMeasurementsHistory } from "@/hooks/useMeasurementsHistory";
 import { db } from "@/firebase/config";
 import { doc, deleteDoc } from "firebase/firestore";
 import { useAuth } from "@/context/AuthContext";
@@ -17,7 +17,7 @@ import { formatDate } from "@/hooks/commonHooks";
 //creo un interfaccia per i dati
 //ho usato l'AI per aiutarmi nella creazione della tabella dinamica e per la creazione della query
 
-export function MesaurementsTable() {
+export function MeasurementsTable() {
   const dataHistory = useMeasurementsHistory(false);
   const { currentUser } = useAuth();
   async function deleteData(id: string) {
@@ -26,7 +26,7 @@ export function MesaurementsTable() {
       db,
       "userData",
       currentUser.uid,
-      "mesaurementsHistory",
+      "measurementsHistory",
       id,
     );
     await deleteDoc(docRef);

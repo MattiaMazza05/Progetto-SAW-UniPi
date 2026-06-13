@@ -7,7 +7,7 @@ import { normalizedWorkoutType } from "@/hooks/commonHooks";
 import { Button } from "../ui/button";
 import { RefreshCcw } from "lucide-react";
 import { Spinner } from "../ui/spinner";
-import { getValidStravaToken } from "@/hooks/stravaService";
+import { getValidStravaToken } from "@/services/stravaService";
 type StravaActivity = {
   id: number;
   start_date: string;
