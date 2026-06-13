@@ -1,15 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { User, ListChecks, PencilRuler, Gauge } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 export default function BottomNav() {
+  const location = useLocation();
+
+  function buttonVariant(path: string) {
+    return location.pathname == path ? "default" : "ghost";
+  }
   return (
     <div className=" fixed bottom-6 left-0 right-0 flex justify-center">
       <nav className="flex items-center justify-center gap-2 rounded-full border bg-background p-2 shadow-lg">
         <Button
           asChild
-          variant="ghost"
+          variant={buttonVariant("/measurements")}
           size="icon"
-          className="size-11 rounded-full"
+          className="size-11 rounded-full transition-all duration-200 ease-in-out active:scale-95"
         >
           <Link to="/measurements">
             <PencilRuler className="h-5 w-5" />
@@ -18,11 +23,11 @@ export default function BottomNav() {
         </Button>
         <Button
           asChild
-          variant="ghost"
+          variant={buttonVariant("/workouts")}
           size="icon"
-          className="size-11 rounded-full"
+          className="size-11 rounded-full transition-all duration-200 ease-in-out active:scale-95"
         >
-          <Link to="workouts">
+          <Link to="/workouts">
             <Gauge className="h-5 w-5" />
             <span className="sr-only">Gauge</span>
           </Link>
@@ -30,9 +35,9 @@ export default function BottomNav() {
 
         <Button
           asChild
-          variant="ghost"
+          variant={buttonVariant("/checklist")}
           size="icon"
-          className="size-11 rounded-full"
+          className="size-11 rounded-full transition-all duration-200 ease-in-out active:scale-95"
         >
           <Link to="/checklist">
             <ListChecks className="h-5 w-5" />
@@ -41,9 +46,9 @@ export default function BottomNav() {
         </Button>
         <Button
           asChild
-          variant="ghost"
+          variant={buttonVariant("/dashboard")}
           size="icon"
-          className="size-11 rounded-full"
+          className="size-11 rounded-full transition-all duration-200 ease-in-out active:scale-95"
         >
           <Link to="/dashboard">
             <User className="h-5 w-5" />
