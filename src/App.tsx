@@ -15,6 +15,7 @@ import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 import CallBack from "./pages/CallBack";
 import { NotificationManager } from "./components/layout/NotificationManager";
+import ProfileRoute from "./routes/ProfileRoute";
 
 function AppBottomNav() {
   const { currentUser } = useAuth();
@@ -50,11 +51,14 @@ function App() {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/userInfo" element={<UserInformation />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/measurements" element={<Measurements />} />
-          <Route path="/checklist" element={<Checklist />} />
-          <Route path="/workouts" element={<Workouts />} />
-          <Route path="/strava/callback" element={<CallBack />} />
+
+          <Route element={<ProfileRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/measurements" element={<Measurements />} />
+            <Route path="/checklist" element={<Checklist />} />
+            <Route path="/workouts" element={<Workouts />} />
+            <Route path="/strava/callback" element={<CallBack />} />
+          </Route>
         </Route>
       </Routes>
       <AppBottomNav />

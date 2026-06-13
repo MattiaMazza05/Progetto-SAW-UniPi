@@ -69,9 +69,7 @@ export default function Checklist() {
       setError("Inserisci una descrizione");
       return;
     }
-    //TODO levare questa funzione prima di deploy
     function createId() {
-      //mi serve solo in fase di sviluppo
       if (crypto.randomUUID) {
         return crypto.randomUUID();
       }

@@ -55,6 +55,7 @@ export function UserInfoForm({ className, ...props }: React.ComponentProps<"div"
           email: currentUser.email,
           photoURL: currentUser.photoURL,
           notificationTime: notificationTime,
+          profileCompleted: true,
         },
         { merge: true },
       );
