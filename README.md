@@ -193,10 +193,15 @@ Cognome: Mazza
 Matricola: 671860
 
 ## License
-## License
 
-Copyright © 2026 Mattia Mazza. All rights reserved.
+Copyright © 2026 Mattia Mazza.
 
-This project is publicly available for viewing and educational/portfolio
-purposes only. The source code may not be copied, modified, redistributed,
-or used in other projects without prior written permission.
+This repository is publicly available for viewing and educational,
+academic, and portfolio purposes.
+
+The source code may not be copied, modified, redistributed,
+sublicensed, or incorporated into other projects without prior
+written permission.
+
+Third-party libraries and dependencies remain subject to their
+respective licenses.
