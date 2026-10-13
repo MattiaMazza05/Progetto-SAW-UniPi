@@ -21,13 +21,13 @@ Password: Demo671860
 L'account demo contiene dati già inseriti per testare dashboard, misurazioni, grafici, checklist e allenamenti.
 
 ## Funzioni principali 
-- Registrazione e Login con Firebase Authentication o con Google
+- Registrazione e accesso con Firebase Authentication (email/password o Google)
 - Dashboard profilo con possibilità di modifica dei dati personali
 - Inserimento peso e misurazioni corporee, con conseguente calcolo di massa grassa e massa magra tramite formula US Navy e visualizzazione nel grafico
 - Inserimento allenamenti manuali tra corsa e pesi oppure tramite collegamento e sincronizzazione a Strava tramite OAuth2 e API REST
 - Checklist giornaliera delle abitudini con streak consecutiva
-- Notifiche locali tramite Service Worker
-- Supporto offline per i dati già caricati tramite persistenza Firestore
+- Notifiche locali del browser, con promemoria giornaliero mentre l'app è aperta
+- Supporto PWA e persistenza offline Firestore per i dati già caricati (in base al supporto del browser)
 
 ## Tecnologie utilizzate
 - React
@@ -99,7 +99,7 @@ Il flusso implementato è:
 3. Strava restituisce un authorization code alla callback dell'app;
 4. l'app scambia il code con access token e refresh token;
 5. i token vengono salvati in Firestore;
-6. l'utente puo sincronizzare le attivita dell'ultimo mese.
+6. l'utente può sincronizzare fino a 60 attività dell'ultimo mese; quelle già salvate non vengono importate di nuovo.
 
 Il progetto salva anche `refresh_token` ed `expires_at`, cosi da poter aggiornare il token senza richiedere ogni volta una nuova autorizzazione.
 
@@ -118,7 +118,7 @@ In questo modo la checkbox risulta selezionata solo se l'abitudine e stata compl
 
 ### Notifiche
 
-L'utente puo abilitare le notifiche dalla dashboard e impostare un orario giornaliero.  
+L'utente può abilitare le notifiche dalla dashboard e impostare un orario giornaliero. Il promemoria è programmato con un timer nel browser e viene inviato mentre l'app è aperta; non è una notifica push in background.
 
 Se le notifiche sono abilitate, viene programmata una notifica locale all'orario scelto.
 
@@ -139,10 +139,11 @@ VITE_FIREBASE_API_KEY=...
 VITE_STRAVA_CLIENT_ID=...
 VITE_STRAVA_CLIENT_SECRET=...
 ```
+
+Le variabili `VITE_*` vengono incluse nel bundle frontend: in particolare, il `VITE_STRAVA_CLIENT_SECRET` non è segreto e non va usato in un deployment pubblico. L'implementazione attuale effettua lo scambio e il rinnovo dei token Strava nel client; per un uso pubblico, sposta queste operazioni in un backend protetto. Configura inoltre Firebase Authentication (email/password e Google), Firestore e l'URL di callback Strava `/strava/callback` negli ambienti locali e di produzione.
 ## PWA e offline
 
-L'app è configurata come PWA tramite `vite-plugin-pwa`.
-È installabile da browser e supporta la visualizzazione offline dei dati Firestore già caricati.
+L'app è configurata come PWA tramite `vite-plugin-pwa` ed è installabile dai browser compatibili. Firestore abilita la persistenza locale dei dati già caricati; la disponibilità offline dipende dal supporto del browser e non sostituisce la configurazione delle regole di sicurezza Firestore.
 
 ## Installazione e avvio locale
 
